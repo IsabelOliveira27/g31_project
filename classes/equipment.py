@@ -59,9 +59,3 @@ class Equipment(Gclass):
         return self._creation_date
 
 
-    
-e = Equipment(120, 'Bond', '14/02/2025')
-print(e.name)
-print(e.creation_date)
-print(e.id)
-
