@@ -15,25 +15,25 @@ class Equipment_Operator(Gclass):
 
     def __init__(self, id, equipment_id, operator_id, utilization_date, cost):
         super().__init__()
-        self.id = type(self).get_id(id)
-        self.equipment_id = int(equipment_id)
-        self.operator_id = int(operator_id)
-        self.utilization_date = utilization_date
-        self.cost = float(cost)
+        self._id = type(self).get_id(id)
+        self._equipment_id = int(equipment_id)
+        self._operator_id = int(operator_id)
+        self._utilization_date = utilization_date
+        self._cost = float(cost)
         
         type(self).obj[self.id] = self
         type(self).lst.append(self.id)
 
     def get_year(self):
-        return self.utilization_date.split('/')[-1]
+        return self._utilization_date.split('/')[-1]
 
     def get_efficiency_score(self):
-        if self.cost == 0:
+        if self._cost == 0:
             return "N/A"
         return round(1000 / self.cost, 2)
 
     def is_weekend_operation(self):
-        day, month, year = map(int, self.utilization_date.split('/'))
+        day, month, year = map(int, self._utilization_date.split('/'))
         dt = datetime.date(year, month, day)
         return dt.weekday() >= 5
 
@@ -47,8 +47,8 @@ class Equipment_Operator(Gclass):
 
     @classmethod
     def find_operator_usage(cls, op_id):
-        return [o.equipment_id for o in cls.obj.values() if o.operator_id == op_id]
+        return [o._equipment_id for o in cls.obj.values() if o._operator_id == op_id]
 
     def __str__(self):
-        return f"Log:{self.id}|Op:{self.operator_id}|Eq:{self.equipment_id}|Cost:{self.cost}"
+        return f"Log:{self.id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Cost:{self._cost}"
     
