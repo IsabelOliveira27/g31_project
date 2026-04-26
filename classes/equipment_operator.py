@@ -22,7 +22,7 @@ class Equipment_Operator(Gclass):
         self._id = novo_id
         self._equipment_id = int(equipment_id)
         self._operator_id = int(operator_id)
-        self._utilization_date = utilization_date # Mantemos string para o split() funcionar abaixo
+        self._utilization_date = utilization_date 
         self._cost = float(cost)
         
 
