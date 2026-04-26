@@ -27,7 +27,7 @@ class Maintenance_event (Gclass):
         self._maintenance_type_id = maintenance_type_id
         self._equipment_id = equipment_id
         self._extra_info = extra_info
-        self._Maintenance_Date = datetime.datetime.strptime(Maintenance_Date, "%d/%m/%Y"). date()
+        self._Maintenance_Date = datetime.strptime(Maintenance_Date, "%d/%m/%Y"). date()
 
         Maintenance_event.obj[id] = self
     
@@ -64,7 +64,7 @@ class Maintenance_event (Gclass):
     
     @Maintenance_Date. setter
     def Maintenance_Date(self, Maintenance_Date):
-        self._Maintenance_Date = Maintenance_Date
+        self._Maintenance_Date = Maintenance_Date.datetime.datetime.strptime(Maintenance_Date, "%d/%m/%Y").date()
     
     @property
     def extra_info(self):
