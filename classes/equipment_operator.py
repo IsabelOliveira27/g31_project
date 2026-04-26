@@ -5,7 +5,7 @@ Created on Mon Apr 20 13:56:42 2026
 @author: isabel
 """
 from classes.gclass import Gclass
-from datetime import datetime # Import direto para facilitar
+from datetime import datetime 
 
 class Equipment_Operator(Gclass):
     obj = dict()
