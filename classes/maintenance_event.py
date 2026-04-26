@@ -4,7 +4,7 @@ Created on Mon Apr 20 14:40:22 2026
 
 @author: Constança Figueiredo
 """
-classes.gclass import Gclass
+from classes.gclass import Gclass
 import datetime
 
 class Maintenance_event (Gclass):
