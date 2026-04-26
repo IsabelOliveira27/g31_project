@@ -11,26 +11,26 @@ class Maintenance_Type(Gclass):
     lst = list()
     pos = 0
     sortkey = ''
-    att = ['_maintenance_type_id','_equipment_id']
+    att = ['_id','_equipment_id']
     header = 'Maintenance Types'
     des = ['MaintTypeId','EquipId']
     
-    def __init__(self, maintenance_type_id, equipment_id):
+    def __init__(self, id, equipment_id):
         super().__init__()
         
-        maintenance_type_id = Maintenance_Type.get_id(maintenance_type_id)
-        self._maintenance_type_id = maintenance_type_id
+        id = Maintenance_Type.get_id(id)
+        self._id = id
         self._equipment_id = equipment_id
         
-        Maintenance_Type.obj[maintenance_type_id] = self
-        Maintenance_Type.lst.append(maintenance_type_id)
+        Maintenance_Type.obj[id] = self
+        Maintenance_Type.lst.append(id)
     
     @property
-    def maintenance_type_id(self):
-        return self._maintenance_type_id
-    @maintenance_type_id.setter
-    def maintenance_type_id(self, maintenance_type_id):
-        self._maintenance_type_id = maintenance_type_id
+    def id(self):
+        return self._id
+    @id.setter
+    def id(self, id):
+        self._id = id
     
     @property
     def equipment_id(self):
