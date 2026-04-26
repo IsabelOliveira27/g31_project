@@ -13,7 +13,7 @@ class Maintenance_event (Gclass):
     pos = 0
     sortkey =''
 
-att = ["id", "maintenance_date","maintenance_type_id" , "equipment_id", "extra_info"]
+att = ["_id", "_maintenance_date","_maintenance_type_id" , "_equipment_id", "_extra_info"]
 
 header = "Maintenance_event"
 
@@ -35,7 +35,7 @@ def _init_(self,id, maintenance_type_id, equipment_id, maintenance_date, extra_i
 
 @property
 def id(self):
-    return self.id
+    return self._id
 
 @id.setter
 def id(self,id):
