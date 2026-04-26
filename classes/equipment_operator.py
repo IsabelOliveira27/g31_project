@@ -4,7 +4,6 @@ Created on Mon Apr 20 13:56:42 2026
 
 @author: isabel
 """
-# -*- coding: utf-8 -*-
 from classes.gclass import Gclass
 from datetime import datetime # Import direto para facilitar
 
