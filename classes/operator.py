@@ -7,7 +7,7 @@ Created on Mon Apr 20 14:39:58 2026
 
 from classes.gclass import Gclass
 
-import datetime
+from datetime import datetime
 
 class Operator(Gclass):
     obj = dict()
