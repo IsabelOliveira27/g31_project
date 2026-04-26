@@ -4,7 +4,7 @@ Created on Mon Apr 20 14:40:22 2026
 
 @author: Constança Figueiredo
 """
-from gclass import Gclass
+classes.gclass import Gclass
 import datetime
 
 class Maintenance_event (Gclass):
@@ -13,11 +13,11 @@ class Maintenance_event (Gclass):
     pos = 0
     sortkey =''
 
-att = ["id", "_date_main", "_extra_info"]
+att = ["id", "maintenance_date", "extra_info"]
 
 header = "Maintenance_event"
 
-des = ["id", "_date_main", "_extra_info"]
+des = ["id", "maintenance_date", "extra_info"]
 
 def _init_(self,id, maintenance_type_id, equipment_id, maintenance_date, extra_info):
     super()._init__()
