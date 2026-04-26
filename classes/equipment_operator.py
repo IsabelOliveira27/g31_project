@@ -2,12 +2,11 @@
 """
 Created on Mon Apr 20 13:56:42 2026
 
-@author: isabe
+@author: isabel
 """
+# -*- coding: utf-8 -*-
 from classes.gclass import Gclass
-import datetime
-
-
+from datetime import datetime # Import direto para facilitar
 
 class Equipment_Operator(Gclass):
     obj = dict()
@@ -19,85 +18,58 @@ class Equipment_Operator(Gclass):
 
     def __init__(self, id, equipment_id, operator_id, utilization_date, cost):
         super().__init__()
-        self._id = type(self).get_id(id)
+        
+        novo_id = Equipment_Operator.get_id(id)
+        self._id = novo_id
         self._equipment_id = int(equipment_id)
         self._operator_id = int(operator_id)
-        self._utilization_date = utilization_date
+        self._utilization_date = utilization_date # Mantemos string para o split() funcionar abaixo
         self._cost = float(cost)
         
-        type(self).obj[self.id] = self
-        type(self).lst.append(self.id)
+
+        Equipment_Operator.obj[novo_id] = self
+        Equipment_Operator.lst.append(novo_id)
 
     @property
     def id(self):
         return self._id
 
-    @property
-    def equipment_id(self):
-        return self._equipment_id
-
-    @property
-    def operator_id(self):
-        return self._operator_id
+    @id.setter
+    def id(self, value):
+        self._id = value
 
     @property
     def utilization_date(self):
-        return datetime.datetime.strptime(self._utilization_date, "%d/%m/%Y").date()
-        
+        if isinstance(self._utilization_date, str):
+            return datetime.strptime(self._utilization_date, "%d/%m/%Y")
+        return self._utilization_date
+
+    @utilization_date.setter
+    def utilization_date(self, value):
+        self._utilization_date = value
+
     @property
     def cost(self):
         return self._cost
-    
-    @id.setter
-    def id(self,id):
-        self._id=id
 
-    @equipment_id.setter
-    def equipment_id(self,equipment_id):
-        self._equipment_id = equipment_id
-
-    @operator_id.setter
-    def operator_id(self,operator_id):
-        self._operator_id = operator_id
-
-    @utilization_date.setter
-    def utilization_date(self, utilization_date):
-        self._utilization_date = utilization_date
-        
     @cost.setter
-    def cost(self,cost):
-        self._cost = cost
+    def cost(self, value):
+        self._cost = float(value)
 
     @property
     def get_year(self):
-        return self._utilization_date.split('/')[-1]
+        return str(self._utilization_date).split('/')[-1]
+
+    @property
+    def is_weekend_operation(self):
+        dt = self.utilization_date
+        return dt.weekday() >= 5
 
     @property
     def get_efficiency_score(self):
         if self._cost == 0:
             return "N/A"
-        return round(1000 / self.cost, 2) 
-
-    @property
-    def is_weekend_operation(self):
-        day, month, year = map(int, self._utilization_date.split('/'))
-        dt = datetime.date(year, month, day)
-        return dt.weekday() >= 5
-
-    @classmethod
-    def get_total_spending(cls):
-        return sum(float(o.cost) for o in cls.obj.values())
-
-    @classmethod
-    def filter_by_cost_range(cls, min_v, max_v):
-        return [o.id for o in cls.obj.values() if min_v <= o.cost <= max_v]
-
-    @classmethod
-    def find_operator_usage(cls, op_id):
-        return [o._equipment_id for o in cls.obj.values() if o._operator_id == op_id]
+        return round(1000 / self._cost, 2)
 
     def __str__(self):
-        return f"Log:{self.id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Cost:{self._cost}"
-    
-
-    
+        return f"Log:{self._id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Cost:{self._cost}"
