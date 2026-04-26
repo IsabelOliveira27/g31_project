@@ -24,7 +24,7 @@ class Equipment(Gclass):
         id = Equipment.get_id(id)
         self._id = id
         self._name = name
-        self._creation_date = datetime.strptime(creation_date, '%d/%M/%Y')
+        self._creation_date = datetime.strptime(creation_date, '%d/%m/%Y')
         # Add the new object to the dictionary of objects
         Equipment.obj[id] = self
         # Add the id to the list of object ids
@@ -50,12 +50,12 @@ class Equipment(Gclass):
     # creation_date property getter method
     @property
     def creation_date(self):
-        return datetime.strftime(self._creation_date, '%d/%M/%Y')
+        return datetime.strftime(self._creation_date, '%d/%m/%Y')
     
     # creation_date property setter method
     @creation_date.setter
     def creation_date(self, new_date):
-        self._creation_date = datetime.strptime(new_date, '%d/%M/%Y')
+        self._creation_date = datetime.strptime(new_date, '%d/%m/%Y')
         return self._creation_date
 
 
