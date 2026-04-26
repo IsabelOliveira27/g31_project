@@ -5,7 +5,8 @@ Created on Mon Apr 20 13:56:42 2026
 @author: isabel
 """
 from classes.gclass import Gclass
-from datetime import datetime 
+from datetime import datetime
+
 
 class Equipment_Operator(Gclass):
     obj = dict()
@@ -36,6 +37,22 @@ class Equipment_Operator(Gclass):
     @id.setter
     def id(self, value):
         self._id = value
+        
+    @property
+    def operator_id(self):
+        return self._operator_id
+    
+    @operator_id.setter
+    def operator_id(self, operator_id):
+        self._operator_id = operator_id
+        
+    @property    
+    def equipment_id(self):
+        return self._equipment_id
+    
+    @equipment_id.setter
+    def equipment_id(self, equipment_id):
+        self._equipment_id = equipment_id
 
     @property
     def utilization_date(self):
@@ -71,4 +88,5 @@ class Equipment_Operator(Gclass):
         return round(1000 / self._cost, 2)
 
     def __str__(self):
-        return f"Log:{self._id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Cost:{self._cost}"
+        return f"Log:{self._id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Date:{self._utilization_date}|Cost:{self._cost}"
+    
