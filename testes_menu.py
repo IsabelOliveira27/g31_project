@@ -10,7 +10,7 @@ ob = '394;Cole PLC;28/06/2023'
 
 # from classes.operator import Operator
 # test_class = Operator
-# ob = '102;People;act;25/03/1973'
+# ob = '102;People;act;25/03/1972'
 
 
 # from classes.equipment_operator import Equipment_Operator
