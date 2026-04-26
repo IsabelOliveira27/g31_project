@@ -100,5 +100,4 @@ class Equipment_Operator(Gclass):
         return f"Log:{self.id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Cost:{self._cost}"
     
 
-e1=Equipment_Operator(12, 144, 20, "27/03/2007", 30)
     
