@@ -9,11 +9,6 @@ import datetime
 
 
 
-
-
-
-
-
 class Equipment_Operator(Gclass):
     obj = dict()
     lst = list()
