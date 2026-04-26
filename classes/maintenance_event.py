@@ -64,7 +64,7 @@ class Maintenance_event (Gclass):
     
     @Maintenance_Date.setter
     def Maintenance_Date(self, Maintenance_Date):
-        self._Maintenance_Date = Maintenance_Date.datetime.strptime(Maintenance_Date, "%d/%m/%Y").date()
+        self._Maintenance_Date =datetime.strptime(Maintenance_Date, "%d/%m/%Y").date()
     
     @property
     def extra_info(self):
