@@ -13,11 +13,11 @@ class Maintenance_event (Gclass):
     pos = 0
     sortkey =''
 
-att = ["id", "maintenance_date", "extra_info"]
+att = ["id", "maintenance_date","maintenance_type_id" , "equipment_id", "extra_info"]
 
 header = "Maintenance_event"
 
-des = ["id", "maintenance_date", "extra_info"]
+des = ["id", "maintenance_date","maintenance_type_id" , "equipment_id",  "extra_info"]
 
 def _init_(self,id, maintenance_type_id, equipment_id, maintenance_date, extra_info):
     super()._init__()
