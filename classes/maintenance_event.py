@@ -5,7 +5,7 @@ Created on Mon Apr 20 14:40:22 2026
 @author: Constança Figueiredo
 """
 from classes.gclass import Gclass
-import datetime
+from datetime import datetime
 
 class Maintenance_event (Gclass):
     obj = dict()
@@ -19,15 +19,15 @@ header = "Maintenance_event"
 
 des = ["id","equipment_id", "maintenance_type_id" , "Maintenance_Date", "extra_info"]
 
-def _init_(self,id, equipment_id, maintenance_type_id, Maintenance_Date, extra_info):
-    super()._init__()
+def __init__(self,id, equipment_id, maintenance_type_id, Maintenance_Date, extra_info):
+    super().__init__()
 
     id = Maintenance_event.get_id(id)
     self._id = id
     self._maintenance_type_id = maintenance_type_id
     self._equipment_id = equipment_id
     self._extra_info = extra_info
-    self._Maintenance_Date = datetime.strptime(Maintenance_Date, "%d/%m/Y"). date()
+    self._Maintenance_Date = datetime.strptime(Maintenance_Date, "%d/%m/%Y"). date()
 
     Maintenance_event.obj[id] = self
 
