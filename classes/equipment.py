@@ -58,4 +58,7 @@ class Equipment(Gclass):
         self._creation_date = datetime.strptime(new_date, '%d/%m/%Y')
         return self._creation_date
 
+    def __str__(self):
+        return f'{self._id};{self._name};{self._creation_date.strftime('%d/%m/%Y')}'
+
 
