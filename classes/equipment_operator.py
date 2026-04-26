@@ -7,11 +7,20 @@ Created on Mon Apr 20 13:56:42 2026
 from gclass import Gclass
 import datetime
 
+
+
+
+
+
+
+
 class Equipment_Operator(Gclass):
     obj = dict()
     lst = list()
     pos = 0
-    att = ['id', 'equipment_id', 'operator_id', 'utilization_date', 'cost']
+    att = ['_id', '_equipment_id', '_operator_id', '_utilization_date', '_cost']
+    header = 'Equipment_Operator'
+    des = ["ID", "Equipment_ID", "Operator_ID", "Utilization_date", "Cost"]
 
     def __init__(self, id, equipment_id, operator_id, utilization_date, cost):
         super().__init__()
@@ -24,14 +33,57 @@ class Equipment_Operator(Gclass):
         type(self).obj[self.id] = self
         type(self).lst.append(self.id)
 
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def equipment_id(self):
+        return self._equipment_id
+
+    @property
+    def operator_id(self):
+        return self._operator_id
+
+    @property
+    def utilization_date(self):
+        return datetime.datetime.strptime(self._utilization_date, "%d/%m/%Y").date()
+        
+    @property
+    def cost(self):
+        return self._cost
+    
+    @id.setter
+    def id(self,id):
+        self._id=id
+
+    @equipment_id.setter
+    def equipment_id(self,equipment_id):
+        self._equipment_id = equipment_id
+
+    @operator_id.setter
+    def operator_id(self,operator_id):
+        self._operator_id = operator_id
+
+    @utilization_date.setter
+    def utilization_date(self, utilization_date):
+        self._utilization_date = utilization_date
+        
+    @cost.setter
+    def cost(self,cost):
+        self._cost = cost
+
+    @property
     def get_year(self):
         return self._utilization_date.split('/')[-1]
 
+    @property
     def get_efficiency_score(self):
         if self._cost == 0:
             return "N/A"
-        return round(1000 / self.cost, 2)
+        return round(1000 / self.cost, 2) 
 
+    @property
     def is_weekend_operation(self):
         day, month, year = map(int, self._utilization_date.split('/'))
         dt = datetime.date(year, month, day)
@@ -51,4 +103,7 @@ class Equipment_Operator(Gclass):
 
     def __str__(self):
         return f"Log:{self.id}|Op:{self._operator_id}|Eq:{self._equipment_id}|Cost:{self._cost}"
+    
+
+e1=Equipment_Operator(12, 144, 20, "27/03/2007", 30)
     
