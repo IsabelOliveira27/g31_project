@@ -28,7 +28,7 @@ class Operator(Gclass):
         self._id = id
         self._title = title
         self._category = category
-        self._birth_date = datetime.strptime(birth_date, "%d/%m/%Y").date()
+        self._birth_date = datetime.datetime.strptime(birth_date, "%d/%m/%Y").date()
         
         Operator.obj[id] = self
         
@@ -67,7 +67,10 @@ class Operator(Gclass):
     
     @birth_date.setter 
     def birth_date(self, dob):
-        self._birth_date = dob
+        if isinstance(dob, str):
+            self._birth_date = datetime.datetime.strptime(dob, "%d/%m/%Y").date()
+        else:
+            self._birth_date = dob
     
     
     @property
