@@ -1,7 +1,7 @@
 #Class Equipment
 
 from classes.gclass import Gclass
-from datetime import datetime
+import datetime 
 class Equipment(Gclass):
     obj = dict()
     lst = list()
@@ -24,7 +24,7 @@ class Equipment(Gclass):
         id = Equipment.get_id(id)
         self._id = id
         self._name = name
-        self._creation_date = datetime.strptime(creation_date, '%d/%m/%Y')
+        self._creation_date = datetime.datetime.strptime(creation_date, '%d/%m/%Y').date()
         # Add the new object to the dictionary of objects
         Equipment.obj[id] = self
         # Add the id to the list of object ids
@@ -50,15 +50,14 @@ class Equipment(Gclass):
     # creation_date property getter method
     @property
     def creation_date(self):
-        return datetime.strftime(self._creation_date, '%d/%m/%Y')
-    
+        return self._creation_date.strftime('%d/%m/%Y')
+
     # creation_date property setter method
     @creation_date.setter
     def creation_date(self, new_date):
-        self._creation_date = datetime.strptime(new_date, '%d/%m/%Y')
-        return self._creation_date
-
+        self._creation_date = datetime.datetime.strptime(new_date, '%d/%m/%Y').date()
+            
     def __str__(self):
-        return f'{self._id};{self._name};{self._creation_date.strftime('%d/%m/%Y')}'
+        return f"Log:{self._id} | Name of the Equipment:{self.name}|Date of creation:{self.creation_date}"
 
 
