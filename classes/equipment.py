@@ -60,4 +60,36 @@ class Equipment(Gclass):
     def __str__(self):
         return f"Log:{self._id} | Name of the Equipment:{self.name}|Date of creation:{self.creation_date}"
 
+    @classmethod
+    def marca_mais_usada(cls):
+        lst_brand = {}
+        for equip in Equipment.obj.values():
+            marca = equip.name
+            if marca in lst_brand:
+                lst_brand[marca] += 1  
+            else:
+                lst_brand[marca] = 1   
+        moda = max(lst_brand, key=lst_brand.get)
+        return f"A marca mais utilizada para os equipamentos da fábrica é {moda}."
+                
+    @classmethod 
+    def equipamento_mais_antigo(cls):
+        lista_valores = list(cls.obj.values())
+        eq_inicial = lista_valores[0]
 
+        for equi in Equipment.obj.values():
+            if equi._creation_date < eq_inicial._creation_date:
+                eq_inicial=equi 
+        return f"O equipamento mais antigo é ID:{eq_inicial.id} - {eq_inicial.name}, comprado a {eq_inicial.creation_date}"
+
+    @classmethod 
+    def  dia_mais_equipamentos(cls):
+        lst_dates = {}
+        for equip in Equipment.obj.values():
+            data = equip.creation_date
+            if data in lst_dates:
+                lst_dates[data] += 1  
+            else:
+                lst_dates[data] = 1   
+        dia_D = max(lst_dates, key=lst_dates.get)
+        return f"Adquiriu-se mais equipamentos no dia {dia_D}."
