@@ -60,7 +60,7 @@ class Maintenance_event (Gclass):
     
     @property
     def Maintenance_Date(self):
-        return self._maintenance_date
+        return self._Maintenance_Date
     
     @Maintenance_Date.setter
     def Maintenance_Date(self, Maintenance_Date):
