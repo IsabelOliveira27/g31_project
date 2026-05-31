@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>SGF - Tipos de Manutenção</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
+</head>
+<body>
+    <nav>
+        <a href="/operators">Operadores</a>
+        <a href="/equipments">Equipamentos</a>
+        <a href="/utilization">Utilizações</a>
+        <a href="/maintenance">Manutenções</a>
+        <a href="/maintenance_types" class="active">Tipos</a>
+    </nav>
+
+    <div class="box">
+        <h2>Configuração de Tipos de Manutenção</h2>
+        
+        {% if butshow != "disabled" %}
+            <div style="background: rgba(248, 250, 252, 0.8); padding: 14px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 25px;">
+                <form method="get" action="/maintenance_types" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="hidden" name="option" value="search">
+                    <select name="search_att" style="width: 20%;">
+                        <option value="equipment_id">ID Equipamento</option>
+                        <option value="id">ID Tipo</option>
+                    </select>
+                    <input type="text" name="search_val" placeholder="Escreva o ID do equipamento..." style="flex: 1;" required>
+                    <button type="submit" class="blue">Filtrar</button>
+                    <a href="/maintenance_types?option=clear_search"><button type="button">Mostrar Todos</button></a>
+                </form>
+            </div>
+        {% endif %}
+
+        <form method="post" action="/maintenance_types?option=save" style="display: flex; flex-direction: column; flex: 1;">
+            <div class="form-row">
+                <div class="form-group" style="max-width: 150px;">
+                    <label>ID Tipo Manut.:</label>
+                    <input type="text" value="{{id}}" disabled style="font-family: monospace; font-weight: bold; text-align: center; background: #f1f5f9;">
+                </div>
+                {% if butshow == "disabled" and opt_state == "insert" %}
+                <div class="form-group">
+                    <label style="color: #3b82f6;">Inserção por String (Opcional):</label>
+                    <input type="text" name="gclass_string" placeholder="Ex: 0;EquipID">
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ID do Equipamento Associado:</label>
+                    <input type="text" name="equipment_id" value="{{equipment_id}}" {{butedit}} placeholder="Introduza o ID do Ativo relacionado">
+                </div>
+            </div>
+
+            <div class="action-zone">
+                {% if butshow == "disabled" %}
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <button type="submit" class="green" style="padding: 12px 45px;">✔ Gravar Dados</button>
+                        <a href="/maintenance_types?option=cancel"><button type="button" class="gray">Cancelar</button></a>
+                    </div>
+                {% else %}
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 6px;">
+                            <a href="/maintenance_types?option=first"><button type="button">|&lt;</button></a>
+                            <a href="/maintenance_types?option=previous"><button type="button">&lt;</button></a>
+                            <a href="/maintenance_types?option=next"><button type="button">&gt;</button></a>
+                            <a href="/maintenance_types?option=last"><button type="button">&gt;|</button></a>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <a href="/maintenance_types?option=insert"><button type="button" class="green">+ Inserir</button></a>
+                            <a href="/maintenance_types?option=edit"><button type="button" class="blue">✏️ Alterar</button></a>
+                            <a href="/maintenance_types?option=delete"><button type="button" class="red">❌ Eliminar</button></a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+
+        <div class="results-section">
+            <h3> Lista de Tipos de Manutenção por Equipamento ({{ todos_registos|length }})</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;"><a href="/maintenance_types?option=sort_id">ID Tipo Manutenção ↕</a></th>
+                            <th style="width: 60%;"><a href="/maintenance_types?option=sort_eq">ID Equipamento Vinculado ↕</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in todos_registos %}
+                        <tr class="clickable-row" onclick="window.location.href='/maintenance_types?option=current&id={{ item.id }}'" style="{% if item.id|string == id|string %}background-color: #f1f5f9; font-weight: bold;{% endif %}">
+                            <td style="font-family: monospace; color: #2563eb; padding-left: 15px;">#{{ item.id }}</td>
+                            <td>Equipamento Registado #{{ item.eq_id }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
