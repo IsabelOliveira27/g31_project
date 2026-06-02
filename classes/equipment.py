@@ -9,22 +9,23 @@ class Equipment(Gclass):
     sortkey = ''
     
     # Attribute names list, identifier attribute must be the first one and callled 'id'
-    att = ['_id','_name','_creation_date']
+    att = ['_id','_name','_creation_date', '_type']
            
     # Class header title
     header = 'Equipments'
     
     # field description for use in, for example, input form
-    des = ['Id','Name of the Equipment', 'Date of Creation']
+    des = ['Id','Name of the Equipment', 'Date of Creation', 'Type of Equipment']
     
     # Constructor: Called when an object is instantiated
-    def __init__(self, id, name, creation_date):
+    def __init__(self, id, name, creation_date, type):
         super().__init__()
         # Object attributes
         id = Equipment.get_id(id)
         self._id = id
         self._name = name
         self._creation_date = datetime.datetime.strptime(creation_date, '%d/%m/%Y').date()
+        self._type = type 
         # Add the new object to the dictionary of objects
         Equipment.obj[id] = self
         # Add the id to the list of object ids
@@ -56,7 +57,16 @@ class Equipment(Gclass):
     @creation_date.setter
     def creation_date(self, new_date):
         self._creation_date = datetime.datetime.strptime(new_date, '%d/%m/%Y').date()
-            
+
+    @property
+    def type(self):
+        return self._type
+
+    @type.setter
+    def type(self,  new_type):
+        self._type = new_type 
+        return self._type
+        
     def __str__(self):
         return f"Log:{self._id} | Name of the Equipment:{self.name}|Date of creation:{self.creation_date}"
 
