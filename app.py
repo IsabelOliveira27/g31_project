@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, os
+from flask import Flask, render_template, request
+import os
 from datafile import filename
 
 from classes.operator import Operator
@@ -6,6 +7,11 @@ from classes.equipment import Equipment
 from classes.maintenance_event import Maintenance_event
 from classes.maintenance_type import Maintenance_Type
 from classes.equipment_operator import Equipment_Operator
+from classes.userlogin import Userlogin
+
+from subs.apps_gform import apps_gform 
+from subs.apps_subform import apps_subform 
+from subs.apps_userlogin import apps_userlogin
 
 app = Flask(__name__)
 app.secret_key = 'BAD_SECRET_KEY'
@@ -17,6 +23,7 @@ Equipment.read(db_path)
 Maintenance_event.read(db_path)
 Maintenance_Type.read(db_path)
 Equipment_Operator.read(db_path)
+Userlogin.read(db_path)
 
 def validar_foreign_keys(eq_id=None, op_id=None, type_id=None):
     try:
@@ -34,7 +41,7 @@ def validar_foreign_keys(eq_id=None, op_id=None, type_id=None):
         return False
 
 
-@app.route("/")
+@app.route("/dashboard")
 def dashboard():
     filtro_ano = request.args.get("ano", "Todos")
     filtro_mes = request.args.get("mes", "Todos")
@@ -334,6 +341,36 @@ def maintenance_types():
                            id=obj.id if obj else Maintenance_Type.get_id(0), 
                            equipment_id=obj.equipment_id if obj else "", todos_registos=todos)
 
+#login
+@app.route("/")
+def index():
+    return render_template("index.html", ulogin=session.get("user"))
+@app.route("/login")
+def login():
+    return render_template("login.html", user= "", password="", ulogin=session.get("user"),resul = "")
+@app.route("/logoff")
+def logoff():
+    session.pop("user",None)
+    return render_template("index.html", ulogin=session.get("user"))
+@app.route("/chklogin", methods=["post","get"])
+def chklogin():
+    user = request.form["user"]
+    password = request.form["password"]
+    resul = Userlogin.chk_password(user, password)
+    if resul == "Valid":
+        session["user"] = user
+        return render_template("index.html", ulogin=session.get("user"))
+    return render_template("login.html", user=user, password = password, ulogin=session.get("user"),resul = resul)
+
+@app.route("/gform/<cname>", methods=["post","get"])
+def gform(cname):
+    return apps_gform(cname)
+@app.route("/subform/<cname>", methods=["post","get"])
+def subform(cname):
+    return apps_subform(cname)
+@app.route("/Userlogin", methods=["post","get"])
+def userlogin():
+    return apps_userlogin()
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
