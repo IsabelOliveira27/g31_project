@@ -17,6 +17,10 @@ from classes.maintenance_type import Maintenance_type
 from classes.equipment_operator import Equipment_operator
 from classes.userlogin import Userlogin
 
+from subs.apps_gform import apps_gform 
+from subs.apps_subform import apps_subform 
+from subs.apps_userlogin import apps_userlogin
+
 app = Flask(__name__)
 app.secret_key = 'CHAVE_SUPER_SECRETA_E_SEGURA_MB_FIC_2025'
 
