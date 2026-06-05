@@ -3,26 +3,26 @@ import datetime
 
 db = 'equipment_management.db'
 
-from classes.equipment import Equipment
+from ../classes.equipment import Equipment
 test_class = Equipment
 ob = '394;Cole PLC;28/06/2023'
 
 
-# from classes.operator import Operator
+# from ../classes.operator import Operator
 # test_class = Operator
 # ob = '102;People;act;25/03/1972'
 
 
-# from classes.equipment_operator import Equipment_Operator
+# from ../classes.equipment_operator import Equipment_Operator
 # test_class = Equipment_Operator
 # ob = '1;394;102;29/11/2023;733'
 
 
-#from classes.maintenance_event import Maintenance_event
+#from ../classes.maintenance_event import Maintenance_event
 #test_class = Maintenance_event
 #ob = '9;94;28;10/05/2023;enjoy'
 
-# from classes.maintenance_type import Maintenance_Type
+# from ../classes.maintenance_type import Maintenance_Type
 # test_class = Maintenance_Type
 # ob = '28;94'
 
