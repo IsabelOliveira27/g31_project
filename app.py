@@ -136,7 +136,6 @@ def generic_crud(cls, request, form_fields, strobj_format):
 
 
 @app.route("/dashboard")
-@app.route("/")
 def dashboard():
     filtro_ano = request.args.get("ano", "Todos")
     filtro_mes = request.args.get("mes", "Todos")
