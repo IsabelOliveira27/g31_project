@@ -18,14 +18,14 @@ class Equipment(Gclass):
     des = ['Id','Name of the Equipment', 'Date of Creation', 'Type of Equipment']
     
     # Constructor: Called when an object is instantiated
-    def __init__(self, id, name, creation_date, type):
+    def __init__(self, id, name, creation_date, tipo):
         super().__init__()
         # Object attributes
         id = Equipment.get_id(id)
         self._id = id
         self._name = name
         self._creation_date = datetime.datetime.strptime(creation_date, '%d/%m/%Y').date()
-        self._type = type 
+        self._tipo = tipo 
         # Add the new object to the dictionary of objects
         Equipment.obj[id] = self
         # Add the id to the list of object ids
@@ -59,11 +59,11 @@ class Equipment(Gclass):
         self._creation_date = datetime.datetime.strptime(new_date, '%d/%m/%Y').date()
 
     @property
-    def type(self):
+    def tipo(self):
         return self._type
 
     @type.setter
-    def type(self,  new_type):
+    def tipo(self,  new_type):
         self._type = new_type 
         return self._type
         
