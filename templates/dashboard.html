@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> MB & FIC - Dashboard Premium </title>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+        html, body { background-color: #0b0f19; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; }
+        
+        /* FIX DO MENU E FILTROS ESCUROS */
+        nav { background: #111827; height: 55px; padding: 0 20px; display: flex; align-items: center; justify-content: flex-start; border-bottom: 1px solid #1f2937; box-sizing: border-box; gap: 20px; }
+        .nav-left { display: flex; align-items: center; gap: 8px; }
+        nav a { color: #9ca3af; text-decoration: none; padding: 6px 12px; font-weight: 600; font-size: 13px; border-radius: 6px; transition: all 0.2s; }
+        nav a:hover, nav a.active { color: #ffffff; background: #1f2937; }
+        
+        .filter-form { display: flex; align-items: center; gap: 8px; background: #1f2937; padding: 5px 12px; border-radius: 6px; border: 1px solid #374151; }
+        .filter-form select { background: #1f2937 !important; color: #ffffff !important; border: none; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; padding: 2px; }
+        .filter-form select option { background: #111827 !important; color: #ffffff !important; }
+        .filter-form button { background: #2563eb; color: white; border: none; padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        
+        /* GRELHA ADAPTATIVA SEM SCROLL */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 14px; height: calc(100vh - 55px); box-sizing: border-box; }
+        .card { background: #151f32; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; }
+        .card-title { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 6px; flex-shrink: 0; }
+        .chart-container { flex: 1; width: 100%; min-height: 0; }
+
+        .col-3 { grid-column: span 3; }
+        .col-4 { grid-column: span 4; }
+        .col-5 { grid-column: span 5; }
+        .col-9 { grid-column: span 9; }
+
+        .nested-row { display: flex; flex-direction: column; gap: 14px; height: 100%; }
+        .kpi-box { background: #151f32; border-left: 4px solid #3b82f6; justify-content: center; padding: 14px; height: 32%; box-sizing: border-box; }
+        .mini-chart-box { height: 68%; }
+
+        .matplotlib-container { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 0; overflow: hidden; }
+        .matplotlib-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <form method="get" action="/dashboard" class="filter-form">
+            <select name="ano">
+                <option value="Todos" {% if filtro_ano == 'Todos' %}selected{% endif %}>Todos os Anos</option>
+                {% for a in anos_disponiveis %}
+                <option value="{{ a }}" {% if filtro_ano == a %}selected{% endif %}>{{ a }}</option>
+                {% endfor %}
+            </select>
+            <select name="mes">
+                <option value="Todos" {% if filtro_mes == 'Todos' %}selected{% endif %}>Todos os Meses</option>
+                {% for m in meses_disponiveis %}
+                <option value="{{ m.num }}" {% if filtro_mes == m.num %}selected{% endif %}>{{ m.nome }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">OK</button>
+        </form>
+        
+        <div class="nav-left">
+            <a href="/dashboard" class="active">Dashboard</a>
+            <a href="/operators">Operadores</a>
+            <a href="/equipments">Equipamentos</a>
+            <a href="/utilization">Utilizações</a>
+            <a href="/maintenance">Manutenções</a>
+            <a href="/maintenance_types">Tipos</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-grid">
+        
+        <div class="col-3 nested-row">
+            <div class="card kpi-box">
+                <div class="card-title" style="color: #3b82f6;">Custo Acumulado</div>
+                <div style="font-size: 20px; font-weight: 800; color: #ffffff;">{{ "%.2f"|format(custo_total_periodo) }} €</div>
+                <div style="font-size: 10px; color: #475569; margin-top: 1px;">Filtro ativo: {{ filtro_mes }}/{{ filtro_ano }}</div>
+            </div>
+            <div class="card mini-chart-box">
+                <div class="card-title">Top 5 Intervenções por Máquina</div>
+                <div id="g2" class="chart-container"></div>
+            </div>
+        </div>
+
+        <div class="card col-9">
+            <div class="card-title">Evolução de Custos por Tempo</div>
+            <div id="g1" class="chart-container"></div>
+        </div>
+
+        <div class="card col-4">
+            <div class="card-title">Distribuição por Tipo de Manutenção</div>
+            <div id="g4" class="chart-container"></div>
+        </div>
+
+        <div class="card col-5">
+            <div class="card-title">Idade em Meses vs Avarias (Tamanho: Custo)</div>
+            <div id="g3" class="chart-container"></div>
+        </div>
+
+        <div class="card col-3">
+            <div class="card-title">Matriz: Equipamento vs Operador</div>
+            <div class="matplotlib-container">
+                {% if heatmap_img %}
+                    <img src="data:image/png;base64,{{ heatmap_img }}" class="matplotlib-img">
+                {% else %}
+                    <p style="color: #475569; font-size: 11px; text-align: center;">Sem cruzamentos<br>no período selecionado.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const layoutBase = {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#64748b', size: 9, family: 'system-ui, sans-serif' },
+            margin: { t: 5, b: 20, l: 35, r: 10 },
+            showlegend: false,
+            xaxis: { gridcolor: '#1e293b', zeroline: false, showgrid: false },
+            yaxis: { gridcolor: '#1e293b', zeroline: false, showgrid: true }
+        };
+        const configOculta = { displayModeBar: false, responsive: true };
+
+        // G1: Evolução
+        Plotly.newPlot('g1', [{
+            x: {{ g1_x|tojson }}, y: {{ g1_y|tojson }},
+            type: 'scatter', mode: 'lines+markers',
+            line: { color: '#3b82f6', width: 2 },
+            marker: { size: 4, color: '#60a5fa' }
+        }], { ...layoutBase, xaxis: { type: 'category', gridcolor: '#1e293b', showgrid: false } }, configOculta);
+
+        // G2: Top 5 Máquinas (Barras Horizontais Fixas)
+        Plotly.newPlot('g2', [{
+            x: {{ g2_valores|tojson }}, y: {{ g2_labels|tojson }},
+            type: 'bar', orientation: 'h',
+            marker: { color: '#10b981', width: 0.5 }
+        }], { ...layoutBase, margin: { t: 5, b: 15, l: 75, r: 5 } }, configOculta);
+
+        // G3: Scatter Plot - Agora com dispersão real por meses no eixo X
+        Plotly.newPlot('g3', [{
+            x: {{ sc_x|tojson }}, y: {{ sc_y|tojson }},
+            mode: 'markers',
+            text: {{ sc_text|tojson }},
+            hoverinfo: 'text',
+            marker: {
+                size: {{ sc_sizes|tojson }},
+                color: {{ sc_colors|tojson }},
+                opacity: 0.8,
+                line: { width: 1, color: '#0b0f19' }
+            }
+        }], {
+            ...layoutBase,
+            xaxis: { title: { text: 'Idade (Meses)', font: { size: 8 } }, gridcolor: '#1e293b', showgrid: true },
+            yaxis: { title: { text: 'Nº Avarias', font: { size: 8 } }, gridcolor: '#1e293b', showgrid: true }
+        }, configOculta);
+
+        // G4: Donut das Categorias
+        Plotly.newPlot('g4', [{
+            labels: {{ g4_labels|tojson }}, values: {{ g4_values|tojson }},
+            type: 'pie', hole: 0.55,
+            marker: { colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#64748b'] },
+            textinfo: 'percent',
+            automargin: true
+        }], { 
+            ...layoutBase, 
+            showlegend: true, 
+            legend: { font: { color: '#64748b', size: 8 }, orientation: 'h', x: 0, y: -0.1 } 
+        }, configOculta);
+    </script>
+</body>
+</html>
