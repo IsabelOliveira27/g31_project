@@ -25,14 +25,14 @@ app = Flask(__name__)
 app.secret_key = 'CHAVE_SUPER_SECRETA_E_SEGURA_MB_FIC_2025'
 
 db_path = os.path.join(filename, 'MB_&_FIC.db') if not filename.endswith('/') else filename + 'MB_&_FIC.db'
-
+db_path2 = os.path.join(filename, 'users.db') if not filename.endswith('/') else filename + 'users.db'
 
 Operator.read(db_path)
 Equipment.read(db_path)
 Maintenance_event.read(db_path)
 Maintenance_type.read(db_path)
 Equipment_operator.read(db_path)
-Userlogin.read(db_path)
+Userlogin.read(db_path2)
 
 
 
