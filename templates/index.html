@@ -11,17 +11,16 @@
 </head>
 <body>
     {% if ulogin %}
-        <nav class="barra-superior">
-            <ul class="menu">
-                <li><a class="button" href="/logoff">Logoff</a></li>
-                <li><a class="button" href="/Person">Person</a></li>
-                <li><a class="button" href="/gform/Customer">Customer</a></li>
-                <li><a class="button" href="/gform/Product">Product</a></li>
-                <li><a class="button" href="/gform/CustomerOrder">Order</a></li>
-                <li><a class="button" href="/subform/CustomerOrder_OrderProduct?option=''">Order lines</a></li>
-                <li><a class="button" href="/Userlogin">Users</a></li>
-                <li><a class="button" style="color: lightblue;">User: {{ ulogin }}</a></li>
-            </ul>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/operators">Operadores</a>
+            <a href="/equipments" class="active">Equipamentos</a>
+            <a href="/utilization">Utilizações</a>
+            <a href="/maintenance">Manutenções</a>
+            <a href="/maintenance_types">Tipos</a>
+            <a class="button" style="color: lightblue;">User: {{ ulogin }}</a>
+            <a class="button" href="/Userlogin">Users</a>
+            <a href="/logoff">Logoff</a>
         </nav>
     {% endif %}
 
