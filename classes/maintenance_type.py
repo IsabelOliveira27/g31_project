@@ -49,3 +49,15 @@ class Maintenance_Type(Gclass):
         if equipment_id is not None:
             return counts.get(equipment_id, 0)
         return counts
+
+    @classmethod
+    def exists(cls, id):
+        return id in cls.obj
+
+    @classmethod
+    def remove(cls, id):
+        if not cls.exists(id):
+            raise KeyError(f"Maintenance_Type with id '{id}' doesnt exist.")
+        
+        del cls.obj[id]
+        cls.lst.remove(id)
