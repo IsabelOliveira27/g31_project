@@ -10,32 +10,8 @@
     {% endblock %}
 </head>
 <body>
-    {% if ulogin %}
-        <nav>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/operators">Operadores</a>
-            <a href="/equipments">Equipamentos</a>
-            <a href="/utilization">Utilizações</a>
-            <a href="/maintenance">Manutenções</a>
-            <a href="/maintenance_types">Tipos</a>
-            <a class="button" style="color: lightblue;">User: {{ ulogin }}</a>
-            <a class="button" href="/Userlogin">Users</a>
-            <a href="/logoff">Logoff</a>
-        </nav>
-    {% endif %}
 
-
-    {% if not ulogin and request.path != '/login' and request.path != '/chklogin' %}
-        <header class="barra-superior">
-            <div class="logo">
-                <h1>MB & FIC</h1>
-            </div>
-            <a href="{{ url_for('login') }}">
-                <button class="btn-login">Login</button>
-            </a>
-        </header>
-    {% endif %}
-
+    {% include 'menu.html' %}
 
     <main class="conteudo-principal">
         {% block content %}
@@ -44,6 +20,10 @@
                 <p>A empresa de topo no mercado</p>
             </div>
         {% endblock %}
+    </main>
+
+</body>
+</html>
     </main>
 
 </body>
