@@ -35,7 +35,6 @@ Equipment_operator.read(db_path)
 Userlogin.read(db_path2)
 
 
-
 prev_option = ""
 
 def validar_foreign_keys(eq_id=None, op_id=None, type_id=None):
@@ -315,7 +314,7 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
-        ulogin=session.get("ulogin"),
+        ulogin=session.get("user"),
         anos_disponiveis=anos_disponiveis,
         meses_disponiveis=meses_disponiveis,
         filtro_ano=filtro_ano,
@@ -348,9 +347,9 @@ def operators():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("operators.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Operator.get_id(0), title="", category="", birth_date="", todos_registos=todos_registos)
+        return render_template("operators.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Operator.get_id(0), title="", category="", birth_date="", todos_registos=todos_registos)
         
-    return render_template("operators.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("operators.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Operator.att[0]) if obj else Operator.get_id(0), 
                            title=getattr(obj, Operator.att[1]) if obj else "", 
                            category=getattr(obj, Operator.att[2]) if obj else "", 
@@ -377,10 +376,10 @@ def equipments():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("equipments.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, opt_state="insert", 
+        return render_template("equipments.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, opt_state="insert", 
                                id=Equipment.get_id(0), name="", creation_date="", type="", todos_registos=todos_registos)
     
-    return render_template("equipments.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, opt_state=opt,
+    return render_template("equipments.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, opt_state=opt,
                            id=getattr(obj, Equipment.att[0]) if obj else Equipment.get_id(0), 
                            name=getattr(obj, Equipment.att[1]) if obj else "", 
                            creation_date=obj.creation_date if obj else "", 
@@ -407,9 +406,9 @@ def utilization():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("utilization.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Equipment_operator.get_id(0), equipment_id="", operator_id="", utilization_date="", cost="", todos_registos=todos_registos)
+        return render_template("utilization.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Equipment_operator.get_id(0), equipment_id="", operator_id="", utilization_date="", cost="", todos_registos=todos_registos)
     
-    return render_template("utilization.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("utilization.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Equipment_operator.att[0]) if obj else Equipment_operator.get_id(0), 
                            equipment_id=getattr(obj, Equipment_operator.att[1]) if obj else "", 
                            operator_id=getattr(obj, Equipment_operator.att[2]) if obj else "", 
@@ -437,9 +436,9 @@ def maintenance():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("maintenance.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Maintenance_event.get_id(0), equipment_id="", maintenance_type_id="", maintenance_date="", extra_info="", todos_registos=todos_registos)
+        return render_template("maintenance.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Maintenance_event.get_id(0), equipment_id="", maintenance_type_id="", maintenance_date="", extra_info="", todos_registos=todos_registos)
     
-    return render_template("maintenance.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("maintenance.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Maintenance_event.att[0]) if obj else Maintenance_event.get_id(0), 
                            equipment_id=getattr(obj, Maintenance_event.att[1]) if obj else "", 
                            maintenance_type_id=getattr(obj, Maintenance_event.att[2]) if obj else "", 
@@ -467,9 +466,9 @@ def maintenance_types():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("maintenance_types.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Maintenance_type.get_id(0), equipment_id="", todos_registos=todos_registos)
+        return render_template("maintenance_types.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Maintenance_type.get_id(0), equipment_id="", todos_registos=todos_registos)
         
-    return render_template("maintenance_types.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("maintenance_types.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Maintenance_type.att[0]) if obj else Maintenance_type.get_id(0), 
                            equipment_id=getattr(obj, Maintenance_type.att[1]) if obj else "", todos_registos=todos_registos)
 
@@ -552,14 +551,17 @@ def suggest_mtypes():
 #login
 @app.route("/")
 def index():
-    return render_template("index.html", ulogin=session.get("user"))
+    return render_template("index.html", ulogin=session.get("user"), group=session.get("group"))
+
 @app.route("/login")
 def login():
     return render_template("login.html", user= "", password="", ulogin=session.get("user"),resul = "")
+
 @app.route("/logoff")
 def logoff():
     session.pop("user",None)
     return render_template("index.html", ulogin=session.get("user"))
+
 @app.route("/chklogin", methods=["post","get"])
 def chklogin():
     user = request.form["user"]
@@ -567,15 +569,25 @@ def chklogin():
     resul = Userlogin.chk_password(user, password)
     if resul == "Valid":
         session["user"] = user
-        return render_template("index.html", ulogin=session.get("user"))
+        
+        id_do_utilizador = Userlogin.user_id
+        objeto_utilizador = Userlogin.obj[id_do_utilizador]
+        
+        session['group'] = objeto_utilizador.usergroup
+        
+        return render_template("index.html", ulogin=session.get("user"),group=session.get("group") )
     return render_template("login.html", user=user, password = password, ulogin=session.get("user"),resul = resul)
+
+
 
 @app.route("/gform/<cname>", methods=["post","get"])
 def gform(cname):
     return apps_gform(cname)
+
 @app.route("/subform/<cname>", methods=["post","get"])
 def subform(cname):
     return apps_subform(cname)
+
 @app.route("/Userlogin", methods=["post","get"])
 def userlogin():
     return apps_userlogin()
