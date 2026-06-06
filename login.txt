@@ -1,5 +1,5 @@
 grupo: chefe
-Francesca Charleton FIC1234
+Francesca Charlton FIC1234
 Mathew Brown MB1234
 
 grupo: administrador_equipamento
