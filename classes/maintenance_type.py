@@ -38,3 +38,14 @@ class Maintenance_Type(Gclass):
     @equipment_id.setter
     def equipment_id(self, equipment_id):
         self._equipment_id = equipment_id
+        
+    @classmethod
+    def count_by_equipment(cls, equipment_id=None):
+        counts = {}
+        for k in cls.lst:
+            eq_id = cls.obj[k].equipment_id
+            counts[eq_id] = counts.get(eq_id, 0) + 1
+        
+        if equipment_id is not None:
+            return counts.get(equipment_id, 0)
+        return counts
