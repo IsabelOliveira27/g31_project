@@ -6,15 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
 </head>
 <body>
-    <nav>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/operators">Operadores</a>
-        <a href="/equipments">Equipamentos</a>
-        <a href="/utilization">Utilizações</a>
-        <a href="/maintenance">Manutenções</a>
-        <a href="/maintenance_types" class="active">Tipos</a>
-    </nav>
-
+    {% include 'menu.html' %}
 
     <div class="box">
         <h2>Configuração de Tipos de Manutenção</h2>
