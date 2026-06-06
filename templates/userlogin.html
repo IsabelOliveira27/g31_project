@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title> MB & FIC - Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users.css') }}?v={{ range(1, 9999) | random }}">
+</head>
+<body>
+
+    {% include 'menu.html' %}
+
+    <style>
+        .dropdown:hover .dropdown-content { display: block !important; }
+        .dropdown-content a:hover { background-color: #f1f5f9; }
+    </style>
+
+{% block content %}
+    <div class="admin-dashboard-layout">
+        
+        <aside class="coluna-tabela">
+            <div class="tabela-container">
+                <table class="tabela-unica-coluna">
+                    <thead>
+                        <tr>
+                            <th>Utilizadores Registados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pessoa in pessoas %}
+                        <tr onclick="window.location.href = '/Userlogin?select_id={{ pessoa.id }}'" style="cursor: pointer;">
+                            <td>{{ pessoa.user }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </aside>
+
+        <main class="coluna-formulario">
+            <div class="formulario-card">
+                <h1 style="text-align: center;">Userlogin</h1>
+                <br>
+                
+                <div class="botoes-acoes">
+                    <button id="edit" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=edit'" class="button1">Edit</button>
+                    {% if group == "chefe" %} 
+                        <button id="delete" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=delete'" class="button1">Delete</button>
+                        <button id="insert" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=insert'" class="button1">Insert</button>
+                    {% endif %}
+                    <button id="save" type="submit" form="form" {{butedit}} class="button1">Save</button>
+                    <button id="cancel" type="button" {{butedit}} onclick="window.location.href = '/Userlogin?option=cancel'" class="button1">Cancel</button>
+                    <button id="exit" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=exit'" class="button1">Exit</button>
+                </div>
+                
+                <br>
+
+                <form id="form" action="/Userlogin?option=save" method="post" class="form-dados">
+                    {% if group == "chefe" %} 
+                        <div class="form-group">
+                            <label for="id">Id:</label>
+                            <input type="text" disabled id="id" name="id" value="{{id}}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="user">User:</label>
+                            <input type="text" {{butedit}} id="user" name="user" value="{{user}}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="usergroup">Group:</label>
+                            <input type="text" {{butedit}} id="usergroup" name="usergroup" value="{{usergroup}}"/>
+                        </div>
+                    {% else %}
+                        <div class="form-group">
+                            <label for="id">Id:</label>
+                            <input type="text" disabled id="id" name="id" value="{{id}}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="user">User:</label>
+                            <input type="text" disabled id="user" name="user" value="{{user}}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="usergroup">Group:</label>
+                            <input type="text" disabled id="usergroup" name="usergroup" value="{{usergroup}}"/>
+                        </div>
+                    {% endif %}        
+                    
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" {{butedit}} id="password" name="password"/>
+                    </div>
+                </form>
+                
+                <br>
+                
+                {% if group == "chefe" %} 
+                    <div class="botoes-navegacao">
+                        <button id="first" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=first'" class="button1">First</button>
+                        <button id="previous" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=previous'" class="button1">Previous</button>
+                        <button id="next" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=next'" class="button1">Next</button>
+                        <button id="last" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=last'" class="button1">Last</button>
+                    </div>
+                {% endif %}
+                
+                <p style="color: red; text-align: center; margin-top: 15px;">{{msg}}</p>
+            </div>
+        </main>
+
+    </div>
+{% endblock %}
+
+</body>
+</html>
