@@ -1,0 +1,45 @@
+{% if ulogin %}
+            
+        {% if session.get("group") in ["chefe", "administrador_equipmento", "administrador_pessoal"] %}
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/operators">Operadores</a>
+                <a href="/equipments">Equipamentos</a>
+                <a href="/utilization">Utilizações</a>
+                <a href="/maintenance">Manutenções</a>
+                <a href="/maintenance_types">Tipos</a>
+                <a class="button" href="/Userlogin">Users</a>
+                <a class="button" style="color: lightblue;">User: {{ ulogin }}</a>
+                <a href="/logoff">Logoff</a>
+            </nav>
+    
+        {% elif session.get("group") == "operador_manutencao" %}
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/maintenance">Manutenções</a>
+                <a href="/maintenance_types">Tipos</a>
+                <a class="button" href="/Userlogin">Users</a>
+                <a class="button" style="color: lightblue;">User: {{ ulogin }}</a>
+                <a href="/logoff">Logoff</a>
+            </nav>
+    
+
+        {% elif session.get("group") == "operador_equipamento" %}
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/equipments">Equipamentos</a>
+                <a href="/utilization">Utilizações</a>
+                <a class="button" href="/Userlogin">Users</a>
+                <a class="button" style="color: lightblue;">User: {{ ulogin }}</a>
+                <a href="/logoff">Logoff</a>
+            </nav>
+                
+        {% endif %}
+{% endif %}
+
+{% if not ulogin and request.path != '/login' and request.path != '/chklogin' %}
+    <nav1>
+        <a class="logo">MB & FIC</a>
+        <a href="{{ url_for('login') }}"><button class="botao_login">Login</button></a>
+    </nav1>
+{% endif %}
