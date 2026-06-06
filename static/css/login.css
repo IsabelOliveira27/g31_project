@@ -1,29 +1,17 @@
-/* 1. Configuração do Fundo e Reset de Margens */
 body {
-    background-color: darkblue; /* Fundo rosa */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/fundo.jpg');
+    background-size: cover;       
+    background-position: center;  
+    background-repeat: no-repeat;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Ocupa 100% da altura da janela do navegador */
+    height: 100vh; 
 }
 
-/* 2. Barra Superior (Menu) sempre no topo de ponta a ponta */
-.barra-superior, nav, .barra-menu {
-    width: 100%;
-    height: 60px;
-    background-color: #1a1a1a; 
-    color: white;
-    display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 0 20px; 
-    box-sizing: border-box;
-    /* Remove o position: relative se causar sobreposição */
-}
 
-/* 3. NOVA REGRA: Uma área que agarra no resto do ecrã e centra o formulário */
 .conteudo-principal, main {
     display: flex;
     justify-content: center; 
@@ -34,7 +22,7 @@ body {
     padding: 20px;
 }
 
-"Formulário"
+
 .dados {
     background-color: #ffffff; 
     padding: 40px;
@@ -59,6 +47,7 @@ body {
     align-items: stretch;   
 }
 
+
 .dados label {
     text-align: left; 
     font-weight: bold;
@@ -79,7 +68,7 @@ body {
     color: #333333;
 }
 
-"Botão Login"
+
 .button1 {
     width: 100%;
     background-color: rgb(123, 124, 192);
@@ -97,4 +86,3 @@ body {
 .button1:hover {
     background-color: lightblue;
 }
-
