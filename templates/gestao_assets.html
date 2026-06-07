@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>MB & FIC - Gestão de Assets</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
+</head>
+<body>
+
+    {% include 'menu.html' %}
+
+    <div class="container-gestao">
+        <h2>Gestão de Assets</h2>
+        <div class="grid-assets">
+            
+            {# Lógica para Chefe e Admins #}
+            {% if session.get("group") in ["chefe", "administrador_equipmento", "administrador_pessoal"] %}
+                <a href="/operators" class="card">Operadores</a>
+                <a href="/equipments" class="card">Equipamentos</a>
+                <a href="/utilization" class="card">Utilizações</a>
+                <a href="/maintenance" class="card">Manutenções</a>
+                <a href="/maintenance_types" class="card">Tipos</a>
+    
+            {# Lógica para Operador Manutenção #}
+            {% elif session.get("group") == "operador_manutencao" %}
+                <a href="/maintenance" class="card">Manutenções</a>
+                <a href="/maintenance_types" class="card">Tipos</a>
+    
+            {# Lógica para Operador Equipamento #}
+            {% elif session.get("group") == "operador_equipamento" %}
+                <a href="/equipments" class="card">Equipamentos</a>
+                <a href="/utilization" class="card">Utilizações</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <style>
+        .container-gestao { padding: 40px;}
+        .grid-assets { display: flex; flex-direction: column; gap: 15px; flex-wrap: wrap; }
+        .card {
+            background: #100F3D;
+            padding: 30px;
+            border: 2px solid #100F3D;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #ffffff;
+            flex: 1;
+            width: 15%;
+            text-align: center;
+            font-weight: 600;
+            font-color:#ffffff
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover { border-color: #007bff; color: #007bff; transform: translateY(-5px); }
+    </style>
+    
+</body>
