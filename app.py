@@ -17,18 +17,23 @@ from classes.maintenance_type import Maintenance_type
 from classes.equipment_operator import Equipment_operator
 from classes.userlogin import Userlogin
 
+from subs.apps_gform import apps_gform 
+from subs.apps_subform import apps_subform 
+from subs.apps_userlogin import apps_userlogin
+
 app = Flask(__name__)
 app.secret_key = 'CHAVE_SUPER_SECRETA_E_SEGURA_MB_FIC_2025'
 
 db_path = os.path.join(filename, 'MB_&_FIC.db') if not filename.endswith('/') else filename + 'MB_&_FIC.db'
-
+db_path2 = os.path.join(filename, 'users.db') if not filename.endswith('/') else filename + 'users.db'
 
 Operator.read(db_path)
 Equipment.read(db_path)
 Maintenance_event.read(db_path)
 Maintenance_type.read(db_path)
 Equipment_operator.read(db_path)
-Userlogin.read(db_path)
+Userlogin.read(db_path2)
+
 
 prev_option = ""
 
@@ -130,10 +135,10 @@ def generic_crud(cls, request, form_fields, strobj_format):
 
 
 @app.route("/dashboard")
-@app.route("/")
 def dashboard():
     filtro_ano = request.args.get("ano", "Todos")
     filtro_mes = request.args.get("mes", "Todos")
+    vista = request.args.get("vista", "utilizacao")
 
     anos_disponiveis = ["2024", "2025", "2026"]
     meses_disponiveis = [
@@ -145,184 +150,314 @@ def dashboard():
         {"num": "11", "nome": "Nov"}, {"num": "12", "nome": "Dez"}
     ]
 
-    custo_total_periodo = 0.0
-    cronograma_dados = {}
-    manut_equip = {}
-    contagem_tipos = {}
-    equip_avarias = {}
-    equip_custos = {}
-
-    for c in Equipment_operator.lst:
-        if c in Equipment_operator.obj:
-            uo = Equipment_operator.obj[c]
-            data_str = str(getattr(uo, 'utilization_date', '2026-05-01'))
+    def extrair_ano_mes_dia(data_str):
+        data_str = str(data_str).strip()
+        if "/" in data_str:
+            partes = data_str.split("/")
+            if len(partes) >= 3:
+                return partes[2], partes[1], partes[0]
+        elif "-" in data_str:
             partes = data_str.split("-")
-            ano = partes[0] if len(partes) > 0 else "2026"
-            mes = partes[1] if len(partes) > 1 else "05"
+            if len(partes) >= 3:
+                if len(partes[0]) == 4:
+                    return partes[0], partes[1], partes[2]
+                else:
+                    return partes[2], partes[1], partes[0]
+        return "2026", "05", "01"
 
-            if (filtro_ano != "Todos" and ano != filtro_ano): continue
-            if (filtro_mes != "Todos" and mes != filtro_mes): continue
+    tabela_registos = []
+    global_avarias = {}
+    
+    
+    
+    for c in getattr(Maintenance_event, 'lst', []):
+        if c in getattr(Maintenance_event, 'obj', {}):
+            m_obj = Maintenance_event.obj[c]
+            eq_id_s = str(getattr(m_obj, 'equipment_id', '')).strip()
+            if eq_id_s and eq_id_s != "None":
+                global_avarias[eq_id_s] = global_avarias.get(eq_id_s, 0) + 1
 
-            custo = float(uo.cost) if getattr(uo, 'cost', None) else 0.0
-            custo_total_periodo += custo
+    if vista == "utilizacao":
+        custo_total = 0.0
+        maior_custo = 0.0
+        custo2=100000
+        cronograma = {}
+        cronograma_horas = {}
+        operador_custos = {}
+        equip_type_custos = {}
+        categoria_custos = {}
 
-            chave_tempo = f"{ano}-{mes}" if filtro_ano == "Todos" else f"Dia {partes[2]}" if len(partes) > 2 else data_str
-            cronograma_dados[chave_tempo] = cronograma_dados.get(chave_tempo, 0.0) + custo
+        for c in getattr(Equipment_operator, 'lst', []):
+            if c in getattr(Equipment_operator, 'obj', {}):
+                uo = Equipment_operator.obj[c]
+                ano, mes, dia = extrair_ano_mes_dia(getattr(uo, 'utilization_date', ''))
 
-            eq_id = str(uo.equipment_id).strip()
-            equip_custos[eq_id] = equip_custos.get(eq_id, 0.0) + custo
+                if (filtro_ano != "Todos" and ano != filtro_ano): continue
+                if (filtro_mes != "Todos" and mes != filtro_mes): continue
 
-    for c in Maintenance_event.lst:
-        if c in Maintenance_event.obj:
-            m = Maintenance_event.obj[c]
-            eq_id = str(m.equipment_id).strip()
-            if not eq_id or eq_id == "None": continue
-            
-            eq_name = f"Equip. #{eq_id}"
-            try:
-                key_id = int(eq_id)
-                if key_id in Equipment.obj:
-                    eq_name = Equipment.obj[key_id]._name
-            except:
-                for k, obj in Equipment.obj.items():
-                    if str(k).strip() == eq_id:
-                        eq_name = obj._name
-                        break
-            
-            manut_equip[eq_name] = manut_equip.get(eq_name, 0) + 1
-            equip_avarias[eq_id] = equip_avarias.get(eq_id, 0) + 1
+                custo = float(uo.cost) if getattr(uo, 'cost', None) else 0.0
+                horas = float(getattr(uo, 'hours_used', 8.0))
+                custo_total += custo
+                if custo > maior_custo:
+                    maior_custo = custo
+                
+                custo = float(uo.cost) if getattr(uo, 'cost', None) else 10000000.0
+                if custo < custo2:
+                    custo2 = custo
+                
+                chave_tempo = f"{ano}-{mes}" if filtro_ano == "Todos" else f"Dia {dia}"
+                cronograma[chave_tempo] = cronograma.get(chave_tempo, 0.0) + custo
+                cronograma_horas[chave_tempo] = cronograma_horas.get(chave_tempo, 0.0) + horas
 
-            tipo = str(getattr(m, 'maintenance_type_id', 'Não Definido')).strip()
-            contagem_tipos[tipo] = contagem_tipos.get(tipo, 0) + 1
+                op_id = str(uo.operator_id).strip()
+                op_name = f"Op. #{op_id}"
+                try:
+                    if int(op_id) in Operator.obj:
+                        op_name = getattr(Operator.obj[int(op_id)], 'title', getattr(Operator.obj[int(op_id)], '_title', op_name))
+                except:
+                    pass
+                operador_custos[op_name] = operador_custos.get(op_name, 0.0) + custo
 
-    g1_eixo_x = sorted(list(cronograma_dados.keys())) if cronograma_dados else ["Sem Dados"]
-    g1_eixo_y = [cronograma_dados[k] for k in g1_eixo_x] if cronograma_dados else [0]
+                eq_id = str(uo.equipment_id).strip()
+                t_tipo = "1"
+                eq_name = f"Equip. #{eq_id}"
+                try:
+                    if int(eq_id) in Equipment.obj:
+                        eq_obj = Equipment.obj[int(eq_id)]
+                        t_tipo = str(getattr(eq_obj, 'type', getattr(eq_obj, '_type', '1'))).strip()
+                        eq_name = getattr(eq_obj, 'name', getattr(eq_obj, '_name', eq_name))
+                except:
+                    pass
+                
+                label_tipo = f"Tipo {t_tipo}"
+                equip_type_custos[label_tipo] = equip_type_custos.get(label_tipo, 0.0) + custo
+                
+                cat = getattr(uo, 'category', 'Geral')
+                categoria_custos[cat] = categoria_custos.get(cat, 0.0) + custo
 
-    manut_ordenadas = sorted(manut_equip.items(), key=lambda x: x[1], reverse=False) if manut_equip else []
-    manut_ordenadas = manut_ordenadas[-5:]
-    g2_labels = [item[0] for item in manut_ordenadas] if manut_ordenadas else ["Sem Registos"]
-    g2_valores = [item[1] for item in manut_ordenadas] if manut_ordenadas else [0]
+                dt_original = getattr(uo, 'utilization_date', '')
+                dt_formatada = f"{dia}/{mes}/{ano}" if (ano and mes and dia) else dt_original
 
-    tipos_ordenados = sorted(contagem_tipos.items(), key=lambda x: x[1], reverse=True)
-    if len(tipos_ordenados) > 4:
-        g4_labels = [str(x[0]) for x in tipos_ordenados[:4]] + ["Outros"]
-        g4_values = [x[1] for x in tipos_ordenados[:4]] + [sum(x[1] for x in tipos_ordenados[4:])]
+                tabela_registos.append({
+                    "col1": dt_formatada, "col2": eq_name, "col3": op_name,
+                    "col4": f"{custo:.2f} €", "col5": cat
+                })
+
+        g1_x = sorted(list(cronograma.keys()))
+        g1_y = [cronograma[k] for k in g1_x]
+        g1_y2 = [cronograma_horas[k] for k in g1_x]
+
+        ops_m_sorted = sorted(operador_custos.items(), key=lambda x: x[1], reverse=True)[:5]
+        ops_m_reversed = list(reversed(ops_m_sorted)) 
+        g2_labels = [x[0] for x in ops_m_reversed]
+        g2_valores = [x[1] for x in ops_m_reversed]
+
+        tipos_m = sorted(equip_type_custos.items(), key=lambda x: x[1], reverse=True)
+        g3_labels = [x[0] for x in tipos_m]
+        g3_valores = [x[1] for x in tipos_m]
+        
+        cats_m = sorted(categoria_custos.items(), key=lambda x: x[1], reverse=True)[:5]
+        g5_labels = [x[0] for x in cats_m]
+        g5_valores = [x[1] for x in cats_m]
+
+        media_custo = (custo_total / len(tabela_registos)) if tabela_registos else 0.0
+        
+        equip_custos = {}
+        for c in getattr(Equipment_operator, 'lst', []):
+            if c in getattr(Equipment_operator, 'obj', {}):
+                uo = Equipment_operator.obj[c]
+                eq_id = str(uo.equipment_id).strip()
+                custo = float(uo.cost) if getattr(uo, 'cost', None) else 0.0
+                
+                # Obter nome do equipamento
+                eq_name = f"Equip. #{eq_id}"
+                if int(eq_id) in Equipment.obj:
+                    eq_obj = Equipment.obj[int(eq_id)]
+                    eq_name = getattr(eq_obj, 'name', getattr(eq_obj, '_name', eq_name))
+                    
+                equip_custos[eq_name] = equip_custos.get(eq_name, 0.0) + custo
+    
+
+        return render_template(
+            "dashboard.html", ulogin=session.get("user"),
+            anos_disponiveis=anos_disponiveis, meses_disponiveis=meses_disponiveis,
+            filtro_ano=filtro_ano, filtro_mes=filtro_mes, vista=vista,
+            kpi1=f"{custo_total:.2f} €", title1="Custo Total Operacional",
+            kpi2=f"{media_custo:.2f} €", title2="Custo Médio por Turno",
+            kpi3=f"{maior_custo:.2f} €", title3="Maior Custo Registado",
+            kpi4=f"{custo2:.2f} €", title4="Menor Custo Registado",
+            g1_x=g1_x, g1_y=g1_y, g1_y2=g1_y2, g2_labels=g2_labels, g2_valores=g2_valores,
+            g3_labels=g3_labels, g3_valores=g3_valores, g5_labels=g5_labels, g5_valores=g5_valores,
+            tabela_registos=tabela_registos, 
+            h1="Data", h2="Equipamento", h3="Operador", h4="Custo", h5="Categoria"
+        )
+
     else:
-        g4_labels = [str(x[0]) for x in tipos_ordenados] if tipos_ordenados else ["Geral"]
-        g4_values = [x[1] for x in tipos_ordenados] if tipos_ordenados else [1]
+        avarias_totais = 0
+        manut_equip = {}
+        contagem_tipos = {}
+        equip_avarias = {}
+        equip_custos = {}
+        cronograma_manut = {}
 
-    scatter_x = []
-    scatter_y = []
-    scatter_sizes = []
-    scatter_colors = []
-    scatter_text = []
+        for c_op in getattr(Equipment_operator, 'lst', []):
+            if c_op in getattr(Equipment_operator, 'obj', {}):
+                uo_o = Equipment_operator.obj[c_op]
+                eq_s = str(uo_o.equipment_id).strip()
+                cst_val = float(uo_o.cost) if getattr(uo_o, 'cost', None) else 0.0
+                equip_custos[eq_s] = equip_custos.get(eq_s, 0.0) + cst_val
 
-    mapeamento_cores = {"1": "#3b82f6", "2": "#10b981", "3": "#f59e0b", "4": "#ef4444"}
-    custos_validos = [v for v in equip_custos.values() if v > 0]
-    max_custo = max(custos_validos) if custos_validos else 1.0
+        for c in getattr(Maintenance_event, 'lst', []):
+            if c in getattr(Maintenance_event, 'obj', {}):
+                m = Maintenance_event.obj[c]
+                dt_m = getattr(m, 'maintenance_date', '')
+                ano, mes, dia = extrair_ano_mes_dia(dt_m)
 
-    for eq_id, eq_obj in Equipment.obj.items():
-        id_str = str(eq_id).strip()
-        c_date = str(getattr(eq_obj, 'creation_date', '2024-01-01')).strip()
-        
-        numeros = re.findall(r'\d+', c_date)
-        ano_c, mes_c = 2024, 1 
-        
-        if len(numeros) >= 2:
-            if len(numeros[0]) == 4: 
-                ano_c = int(numeros[0])
-                mes_c = int(numeros[1])
-            elif len(numeros[2]) == 4: 
-                ano_c = int(numeros[2])
-                mes_c = int(numeros[1])
-        elif len(numeros) == 1 and len(numeros[0]) == 4:
-            ano_c = int(numeros[0])
+                if (filtro_ano != "Todos" and ano != filtro_ano): continue
+                if (filtro_mes != "Todos" and mes != filtro_mes): continue
 
-        if mes_c < 1 or mes_c > 12: mes_c = 1
-        
-        idade_meses = (2026 - ano_c) * 12 + (6 - mes_c)
-        if idade_meses < 0: idade_meses = 0
+                eq_id = str(m.equipment_id).strip()
+                if not eq_id or eq_id == "None": continue
 
-        avarias = equip_avarias.get(id_str, 0)
-        custo = equip_custos.get(id_str, 0.0)
-        t_tipo = str(getattr(eq_obj, 'type', '1')).strip()
+                avarias_totais += 1
+                equip_avarias[eq_id] = equip_avarias.get(eq_id, 0) + 1
 
-        tamanho_normalizado = 8 + int((custo / max_custo) * 22)
+                chave_tempo = f"{ano}-{mes}" if filtro_ano == "Todos" else f"Dia {dia}"
+                cronograma_manut[chave_tempo] = cronograma_manut.get(chave_tempo, 0) + 1
 
-        scatter_x.append(idade_meses)
-        scatter_y.append(avarias)
-        scatter_sizes.append(tamanho_normalizado)
-        scatter_colors.append(mapeamento_cores.get(t_tipo, "#8b5cf6"))
-        scatter_text.append(f"Equipamento: {getattr(eq_obj, '_name', id_str)}<br>Idade: {idade_meses} Meses<br>Avarias: {avarias}<br>Custo: {custo:.2f} €")
+                eq_name = f"Equip. #{eq_id}"
+                try:
+                    if int(eq_id) in Equipment.obj:
+                        eq_name = getattr(Equipment.obj[int(eq_id)], 'name', getattr(Equipment.obj[int(eq_id)], '_name', eq_name))
+                except:
+                    pass
 
-    heatmap_encoded = None
-    try:
-        plt.clf()
-        plt.close('all')
-        
-        todas_maquinas = []
-        todos_ops = []
-        for ut in Equipment_operator.obj.values():
-            m_id = str(getattr(ut, 'equipment_id', '')).strip()
-            o_id = str(getattr(ut, 'operator_id', '')).strip()
-            if m_id and o_id and m_id != "None" and o_id != "None":
-                todas_maquinas.append(m_id)
-                todos_ops.append(o_id)
+                manut_equip[eq_name] = manut_equip.get(eq_name, 0) + 1
 
-        maquinas_finais = sorted(list(set(todas_maquinas)))[:6]
-        operadores_finais = sorted(list(set(todos_ops)))[:6]
+                tipo_f = str(getattr(m, 'maintenance_type_id', 'Geral')).split('.')[0]
+                contagem_tipos[tipo_f] = contagem_tipos.get(tipo_f, 0) + 1
 
-        if maquinas_finais and operadores_finais:
-            matriz_dados = np.zeros((len(operadores_finais), len(maquinas_finais)))
-            for ut in Equipment_operator.obj.values():
-                m_id = str(getattr(ut, 'equipment_id', '')).strip()
-                o_id = str(getattr(ut, 'operator_id', '')).strip()
-                if m_id in maquinas_finais and o_id in operadores_finais:
-                    matriz_dados[operadores_finais.index(o_id), maquinas_finais.index(m_id)] += 1
+                dt_formatada = f"{dia}/{mes}/{ano}" if (ano and mes and dia) else dt_m
 
-            fig, ax = plt.subplots(figsize=(4.0, 2.5), facecolor='#151f32')
+                tabela_registos.append({
+                    "col1": dt_formatada, "col2": eq_name, "col3": f"Falha {tipo_f}",
+                    "col4": getattr(m, 'extra_info', 'Sem notas')
+                })
+
+        manut_ord = sorted(manut_equip.items(), key=lambda x: x[1], reverse=True)[:5]
+        manut_ord = list(reversed(manut_ord))
+        g1_x = [x[0] for x in manut_ord]
+        g1_y = [x[1] for x in manut_ord]
+
+        tipos_ord = sorted(contagem_tipos.items(), key=lambda x: x[1], reverse=True)[:5]
+        g2_labels = [f"Falha {x[0]}" for x in tipos_ord]
+        g2_valores = [x[1] for x in tipos_ord]
+
+        g5_x = sorted(list(cronograma_manut.keys()))
+        g5_y = [cronograma_manut[k] for k in g5_x]
+
+        sc_x, sc_y, sc_sizes, sc_colors, sc_text = [], [], [], [], []
+        cores = {"1": "#3b82f6", "2": "#10b981", "3": "#f59e0b", "4": "#ef4444", "5": "#8b5cf6"}
+        max_c = max(equip_custos.values()) if equip_custos else 1.0
+
+        dados_boxplot_custos = { "1":[], "2":[], "3":[], "4":[], "5":[] }
+
+        if hasattr(Equipment, 'obj') and Equipment.obj:
+            for eq_id, eq_obj in Equipment.obj.items():
+                id_str = str(eq_id).strip()
+                avs = global_avarias.get(id_str, 0)
+                if avs == 0: continue
+
+                c_date = str(getattr(eq_obj, 'creation_date', '2024-01-01')).strip()
+                ano_c, mes_c = 2024, 1
+                numeros = re.findall(r'\d+', c_date)
+                if len(numeros) >= 2:
+                    if len(numeros[0]) == 4:
+                        ano_c, mes_c = int(numeros[0]), int(numeros[1])
+                    elif len(numeros[2]) == 4:
+                        ano_c, mes_c = int(numeros[2]), int(numeros[1])
+
+                idade = (2026 - ano_c) * 12 + (6 - mes_c)
+                if idade < 0: idade = 0
+
+                cst = equip_custos.get(id_str, 0.0)
+                t_tipo = str(getattr(eq_obj, 'type', getattr(eq_obj, '_type', '1'))).strip()
+
+                if t_tipo in dados_boxplot_custos:
+                    dados_boxplot_custos[t_tipo].append(cst)
+
+                sc_x.append(idade)
+                sc_y.append(avs)
+                sc_sizes.append(6 + int((cst / max_c) * 20))
+                sc_colors.append(cores.get(t_tipo, "#94a3b8"))
+                
+                eq_real_n = getattr(eq_obj, 'name', getattr(eq_obj, '_name', id_str))
+                sc_text.append(f"Máquina: {eq_real_n}<br>Tipo: {t_tipo}<br>Idade: {idade} m<br>Avarias: {avs}")
+
+        heatmap_encoded = None
+        try:
+            plt.clf()
+            plt.close('all')
+            fig, ax = plt.subplots(figsize=(4.5, 2.6), facecolor='#151f32')
             ax.set_facecolor('#151f32')
-            cax = ax.matshow(matriz_dados, cmap='YlOrRd')
             
-            cbar = fig.colorbar(cax, ax=ax, shrink=0.5)
-            cbar.ax.yaxis.set_tick_params(color='#94a3b8', labelcolor='#94a3b8', labelsize=7)
-            cbar.outline.set_visible(False)
-
-            ax.set_xticks(np.arange(len(maquinas_finais)))
-            ax.set_yticks(np.arange(len(operadores_finais)))
-            ax.set_xticklabels(maquinas_finais, color='#94a3b8', fontsize=7)
-            ax.set_yticklabels(operadores_finais, color='#94a3b8', fontsize=7)
-            ax.tick_params(axis='both', colors='#1e293b', length=0)
+            lista_valores_plot = [dados_boxplot_custos[k] if dados_boxplot_custos[k] else [0] for k in ["1", "2", "3", "4", "5"]]
+            medias = [np.mean(l) for l in lista_valores_plot]
+            categorias = ['Tipo 1', 'Tipo 2', 'Tipo 3', 'Tipo 4', 'Tipo 5']
             
-            for spine in ax.spines.values():
-                spine.set_visible(False)
+            ax.bar(categorias, medias, color=['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'], alpha=0.6, width=0.45)
+            ax.plot(categorias, medias, color='#ffffff', marker='o', linewidth=1.2, markersize=3.5)
+            
+            ax.set_title("Severidade Orçamental por Categoria", color='#cbd5e1', fontsize=11, pad=8, weight='bold')
+            ax.set_ylabel("Custo Médio (€)", color='#94a3b8', fontsize=9, labelpad=4)
+            
+            ax.tick_params(axis='both', colors='#cbd5e1', labelsize=9)
+            ax.grid(axis='y', color='#1e293b', linestyle='--', linewidth=0.5)
+            for spine in ax.spines.values(): spine.set_visible(False)
                 
             plt.tight_layout()
-
             buf = io.BytesIO()
             plt.savefig(buf, format='png', dpi=140, facecolor=fig.get_facecolor(), edgecolor='none')
             buf.seek(0)
             heatmap_encoded = base64.b64encode(buf.getvalue()).decode('utf-8')
             buf.close()
             plt.close(fig)
-    except:
-        heatmap_encoded = None
+        except:
+            heatmap_encoded = None
 
-    return render_template(
-        "dashboard.html",
-        ulogin=session.get("ulogin"),
-        anos_disponiveis=anos_disponiveis,
-        meses_disponiveis=meses_disponiveis,
-        filtro_ano=filtro_ano,
-        filtro_mes=filtro_mes,
-        custo_total_periodo=custo_total_periodo,
-        g1_x=g1_eixo_x, g1_y=g1_eixo_y,
-        g2_labels=g2_labels, g2_valores=g2_valores,
-        g4_labels=g4_labels, g4_values=g4_values,
-        sc_x=scatter_x, sc_y=scatter_y, sc_sizes=scatter_sizes, sc_colors=scatter_colors, sc_text=scatter_text,
-        heatmap_img=heatmap_encoded
-    )
+        return render_template(
+            "dashboard.html", ulogin=session.get("user"),
+            anos_disponiveis=anos_disponiveis, meses_disponiveis=meses_disponiveis,
+            filtro_ano=filtro_ano, filtro_mes=filtro_mes, vista=vista,
+            kpi1=str(avarias_totais), title1="Nº Total de Avarias",
+            kpi2="-", title2="-", kpi3="-", title3="-",
+            g1_x=g1_x, g1_y=g1_y, g2_labels=g2_labels, g2_valores=g2_valores,
+            g5_x=g5_x, g5_y=g5_y,
+            sc_x=sc_x, sc_y=sc_y, sc_sizes=sc_sizes, sc_colors=sc_colors, sc_text=sc_text,
+            heatmap_img=heatmap_encoded, tabela_registos=tabela_registos,
+            h1="Data Falha", h2="Equipamento Crítico", h3="Manutenção Efetuada", h4="Descrição / Extra Info"
+        )
+    
+    
+    
+import pandas as pd
 
+@app.route('/gestao-assets')
+def gestao_assets():
+    df = pd.read_csv('data/g31_Equipment_Operators_Final_2.csv')
+    
+    # Converter datas garantindo dayfirst=True
+    df['maintenance_date_final'] = pd.to_datetime(df['maintenance_date_final'], dayfirst=True, errors='coerce')
+    df['utilization_date'] = pd.to_datetime(df['utilization_date'], dayfirst=True, errors='coerce')
+    
+    # Ordenar pelos últimos 5
+    maint = df.dropna(subset=['maintenance_date_final']).sort_values(by='maintenance_date_final', ascending=False).head(5)
+    util = df.dropna(subset=['utilization_date']).sort_values(by='utilization_date', ascending=False).head(5)
+    
+    return render_template('gestao_assets.html', ulogin=session.get("user"),
+                           ultimas_manutencoes=maint.to_dict(orient='records'),
+                           ultimas_utilizacoes=util.to_dict(orient='records'))
+    
 
 @app.route("/operators", methods=["POST", "GET"])
 def operators():
@@ -343,9 +478,9 @@ def operators():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("operators.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Operator.get_id(0), title="", category="", birth_date="", todos_registos=todos_registos)
+        return render_template("operators.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Operator.get_id(0), title="", category="", birth_date="", todos_registos=todos_registos)
         
-    return render_template("operators.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("operators.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Operator.att[0]) if obj else Operator.get_id(0), 
                            title=getattr(obj, Operator.att[1]) if obj else "", 
                            category=getattr(obj, Operator.att[2]) if obj else "", 
@@ -372,10 +507,10 @@ def equipments():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("equipments.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, opt_state="insert", 
+        return render_template("equipments.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, opt_state="insert", 
                                id=Equipment.get_id(0), name="", creation_date="", type="", todos_registos=todos_registos)
     
-    return render_template("equipments.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, opt_state=opt,
+    return render_template("equipments.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, opt_state=opt,
                            id=getattr(obj, Equipment.att[0]) if obj else Equipment.get_id(0), 
                            name=getattr(obj, Equipment.att[1]) if obj else "", 
                            creation_date=obj.creation_date if obj else "", 
@@ -402,9 +537,9 @@ def utilization():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("utilization.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Equipment_operator.get_id(0), equipment_id="", operator_id="", utilization_date="", cost="", todos_registos=todos_registos)
+        return render_template("utilization.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Equipment_operator.get_id(0), equipment_id="", operator_id="", utilization_date="", cost="", todos_registos=todos_registos)
     
-    return render_template("utilization.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("utilization.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Equipment_operator.att[0]) if obj else Equipment_operator.get_id(0), 
                            equipment_id=getattr(obj, Equipment_operator.att[1]) if obj else "", 
                            operator_id=getattr(obj, Equipment_operator.att[2]) if obj else "", 
@@ -432,9 +567,9 @@ def maintenance():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("maintenance.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Maintenance_event.get_id(0), equipment_id="", maintenance_type_id="", maintenance_date="", extra_info="", todos_registos=todos_registos)
+        return render_template("maintenance.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Maintenance_event.get_id(0), equipment_id="", maintenance_type_id="", maintenance_date="", extra_info="", todos_registos=todos_registos)
     
-    return render_template("maintenance.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("maintenance.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Maintenance_event.att[0]) if obj else Maintenance_event.get_id(0), 
                            equipment_id=getattr(obj, Maintenance_event.att[1]) if obj else "", 
                            maintenance_type_id=getattr(obj, Maintenance_event.att[2]) if obj else "", 
@@ -462,9 +597,9 @@ def maintenance_types():
     todos_registos.sort(key=lambda x: int(x.id) if str(x.id).isdigit() else x.id)
 
     if opt == 'insert' or option == 'insert':
-        return render_template("maintenance_types.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, id=Maintenance_type.get_id(0), equipment_id="", todos_registos=todos_registos)
+        return render_template("maintenance_types.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, id=Maintenance_type.get_id(0), equipment_id="", todos_registos=todos_registos)
         
-    return render_template("maintenance_types.html", ulogin=session.get("ulogin"), butshow=butshow, butedit=butedit, 
+    return render_template("maintenance_types.html", ulogin=session.get("user"), butshow=butshow, butedit=butedit, 
                            id=getattr(obj, Maintenance_type.att[0]) if obj else Maintenance_type.get_id(0), 
                            equipment_id=getattr(obj, Maintenance_type.att[1]) if obj else "", todos_registos=todos_registos)
 
@@ -543,22 +678,21 @@ def suggest_mtypes():
     return jsonify([{"texto": k, "qtd": v} for k, v in sorted(sugestoes.items())])
 
 
-if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
-    
-
 
 #login
 @app.route("/")
 def index():
-    return render_template("index.html", ulogin=session.get("user"))
+    return render_template("index.html", ulogin=session.get("user"), group=session.get("group"))
+
 @app.route("/login")
 def login():
     return render_template("login.html", user= "", password="", ulogin=session.get("user"),resul = "")
+
 @app.route("/logoff")
 def logoff():
     session.pop("user",None)
     return render_template("index.html", ulogin=session.get("user"))
+
 @app.route("/chklogin", methods=["post","get"])
 def chklogin():
     user = request.form["user"]
@@ -566,18 +700,30 @@ def chklogin():
     resul = Userlogin.chk_password(user, password)
     if resul == "Valid":
         session["user"] = user
-        return render_template("index.html", ulogin=session.get("user"))
+        
+        id_do_utilizador = Userlogin.user_id
+        objeto_utilizador = Userlogin.obj[id_do_utilizador]
+        
+        session['group'] = objeto_utilizador.usergroup
+        
+        return render_template("index.html", ulogin=session.get("user"),group=session.get("group") )
     return render_template("login.html", user=user, password = password, ulogin=session.get("user"),resul = resul)
+
+
 
 @app.route("/gform/<cname>", methods=["post","get"])
 def gform(cname):
     return apps_gform(cname)
+
 @app.route("/subform/<cname>", methods=["post","get"])
 def subform(cname):
     return apps_subform(cname)
+
 @app.route("/Userlogin", methods=["post","get"])
 def userlogin():
-    return apps_userlogin()
+    return apps_userlogin(db_path2)
+
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
+    
