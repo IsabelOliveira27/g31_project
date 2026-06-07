@@ -62,7 +62,7 @@ class Equipment(Gclass):
     def tipo(self):
         return self._type
 
-    @type.setter
+    @tipo.setter
     def tipo(self,  new_type):
         self._type = new_type 
         return self._type
