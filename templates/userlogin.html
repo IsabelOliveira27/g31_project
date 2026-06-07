@@ -42,13 +42,13 @@
                 <br>
                 
                 <div class="botoes-acoes">
-                    <button id="edit" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=edit'" class="button1">Edit</button>
+                    <button id="edit" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=edit'" class="button1">Alterar</button>
                     {% if group == "chefe"or group == "administrador_pessoal" %} 
-                        <button id="delete" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=delete'" class="button1">Delete</button>
-                        <button id="insert" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=insert'" class="button1">Insert</button>
+                        <button id="delete" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=delete'" class="button1">Eliminar</button>
+                        <button id="insert" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=insert'" class="button1">Inserir</button>
                     {% endif %}
-                    <button id="save" type="submit" form="form" {{butedit}} class="button1">Save</button>
-                    <button id="cancel" type="button" {{butedit}} onclick="window.location.href = '/Userlogin?option=cancel'" class="button1">Cancel</button>
+                    <button id="save" type="submit" form="form" {{butedit}} class="button1">Guardar</button>
+                    <button id="cancel" type="button" {{butedit}} onclick="window.location.href = '/Userlogin?option=cancel'" class="button1">Cancelar</button>
                 </div>
                 <p style="color: red; text-align: center; margin: 0;">{{msg}}</p>
 
