@@ -26,19 +26,107 @@
 
         .dashboard-container { display: flex; flex-direction: column; gap: 10px; padding: 12px; height: calc(100vh - 55px); box-sizing: border-box; }
         
-        /* BOX KPI UNIFICADA SEM BORDAS BRANCAS INTERNAS */
         .kpi-unified-box { background: #151f32; border: 1px solid #1e293b; border-radius: 8px; display: flex; min-height: 65px; cursor: pointer; transition: background 0.2s; overflow: hidden; }
         .kpi-unified-box:hover { background: #19253d; }
         .kpi-segment { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 8px 24px; box-sizing: border-box; background: #151f32; border: none !important; }
         .kpi-title { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.8px; }
         .kpi-value { font-size: 20px; font-weight: 800; color: #ffffff; margin-top: 1px; }
-
-        .charts-section { display: flex; flex-direction: column; gap: 10px; height: 100%; min-height: 0; }
-        .charts-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; min-height: 215px; flex: 1; }
-        .card { background: #151f32; border: 1px solid #1e293b; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; }
-        .card-title { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 4px; }
-        .chart-container { flex: 1; width: 100%; min-height: 0; }
         
+        .valores{
+            background: #151f32; 
+            border: 1px solid #1e293b; 
+            border-radius: 8px; 
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 0; 
+            overflow: hidden; 
+            height:205%;
+            width: 152%;
+        
+        }
+        
+        .nome{
+            font-size: 20px; 
+            text-transform: uppercase; 
+            color: #94a3b8; 
+            font-weight: 700; 
+            letter-spacing: 0.8px;
+        
+        }
+        
+        
+        .valor{
+            font-size: 30px; 
+            font-weight: 800; 
+            color: #ffffff; 
+            margin-top: 5px; 
+        
+    
+    
+        }
+        .charts-section { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            height: 100%; 
+        }
+        
+
+        .row-60-40 { 
+            display: grid; 
+            grid-template-columns: 60% 40%; 
+            gap: 10px; 
+            flex: 1; 
+            height:45%
+        }
+        
+        .row-40-60 { 
+            display: grid; 
+            grid-template-columns: 40% 60%; 
+            gap: 10px; 
+            flex: 1; 
+            height:45%
+        }
+        
+        
+        .row-at { 
+            display: grid; 
+            grid-template-columns: 100%; 
+            gap: 10px; 
+            flex: 1; 
+            height:45%
+        }
+        
+        .card { 
+            background: #151f32; 
+            border: 1px solid #1e293b; 
+            border-radius: 8px; 
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 0; 
+            overflow: hidden; 
+        }
+        
+        .card img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important; 
+            display: block;
+            margin: auto;
+        }
+        
+        .chart-container { 
+            flex: 1; 
+            width: 100%; 
+            min-height: 0; 
+            position: relative; 
+        }
+        .card-title { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 4px; }
+
         .col-4 { grid-column: span 4; }
         .col-6 { grid-column: span 6; }
         .col-8 { grid-column: span 8; }
@@ -88,65 +176,61 @@
                 <div class="kpi-title">{{ title1 }}</div>
                 <div class="kpi-value">{{ kpi1 }}</div>
             </div>
-            {% if vista == 'utilizacao' %}
-            <div class="kpi-segment">
-                <div class="kpi-title">{{ title2 }}</div>
-                <div class="kpi-value">{{ kpi2 }}</div>
-            </div>
-            <div class="kpi-segment">
-                <div class="kpi-title">{{ title3 }}</div>
-                <div class="kpi-value">{{ kpi3 }}</div>
-            </div>
-            {% endif %}
         </div>
 
         <div class="charts-section" id="zona-graficos">
             {% if vista == 'utilizacao' %}
-            <div class="charts-row">
-                <div class="card col-8">
+            <div class="row-at">
+                <div class="card">
                     <div class="card-title">Evolução de Gastos</div>
                     <div id="plot1" class="chart-container"></div>
                 </div>
-                <div class="card col-4">
+                
+            </div>
+
+            <div class="row-60-40">
+                <div class="card">
                     <div class="card-title">Distribuição de Custo por Tipo de Máquina</div>
-                    <div id="plot2" class="chart-container"></div>
-                </div>
-            </div>
-            <div class="charts-row">
-                <div class="card col-6">
-                    <div class="card-title">Top 5 Operadores com Maiores Despesas</div>
-                    <div id="plot3" class="chart-container"></div>
-                </div>
-                <div class="card col-6">
-                    <div class="card-title">Volume de Atividade por Turno / Categoria</div>
-                    <div id="plot4" class="chart-container"></div>
-                </div>
-            </div>
-            {% else %}
-            <div class="charts-row">
-                <div class="card col-4">
-                    <div class="card-title">Top 5 Máquinas com Mais Intervenções Técnicas</div>
-                    <div id="m_plot1" class="chart-container"></div>
-                </div>
-                <div class="card col-4">
-                    <div class="card-title">Incidência dos Tipos de Manutenção</div>
-                    <div id="m_plot2" class="chart-container"></div>
-                </div>
-                <div class="card col-4">
-                    <div class="card-title">Nº de Interva«enções por Tipo de Máquina</div>
-                    <div style="display: flex; align-items: center; justify-content: center; flex: 1;">
-                        {% if heatmap_img %}
-                            <img src="data:image/png;base64,{{ heatmap_img }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                        {% endif %}
+                        <div id="plot2" class="chart-container">
                     </div>
                 </div>
+                <div class="row-60-40">
+                    <div class="valores">
+                        <div class="nome">{{ title2 }}</div>
+                        <div class="valor">{{ kpi2 }}</div>
+                        <div class="nome">{{ title3 }}</div>
+                        <div class="valor">{{ kpi3 }}</div>
+                        <div class="nome">{{ title4 }}</div>
+                        <div class="valor">{{ kpi4 }}</div>
+                        
+                    </div>
+                </div>
+                
             </div>
-            <div class="charts-row">
-                <div class="card col-6">
+            {% else %}
+            <div class="row-60-40">
+                <div class="card col">
                     <div class="card-title">Evolução do Nº de Intervenções</div>
                     <div id="m_plot5" class="chart-container"></div>
                 </div>
-                <div class="card col-6">
+                <div class="card">
+                    <div class="card-title">Top 5 Máquinas com Mais Intervenções Técnicas</div>
+                    <div id="m_plot1" class="chart-container"></div>
+                </div>
+                
+            </div>
+            <div class="row-40-60">
+                <div class="card">
+                    <div class="card-title">Custo de Intervenções por Tipo de Máquina</div>
+                    
+                    <div style="flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        {% if heatmap_img %}
+                            <img src="data:image/png;base64,{{ heatmap_img }}" 
+                                 style="width: 100%; height: auto; object-fit: contain; display: block;">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card">
                     <div class="card-title">Análise de Dispersão: Idade vs Nº Avarias (Apenas Máquinas com Falhas)</div>
                     <div id="m_plot3" class="chart-container"></div>
                 </div>
@@ -222,8 +306,7 @@
         {% if vista == 'utilizacao' %}
         try {
             Plotly.newPlot('plot1', [
-                { x: {{ g1_x|tojson if g1_x else [] }} || [], y: {{ g1_y|tojson if g1_y else [] }} || [], type: 'bar', name: 'Custo', marker: { color: 'rgba(59, 130, 246, 0.4)', width: 0.4 } },
-                { x: {{ g1_x|tojson if g1_x else [] }} || [], y: {{ g1_y2|tojson if g1_y2 else [] }} || [], type: 'scatter', mode: 'lines+markers', name: 'Horas', line: { color: '#10b981', width: 1.5 }, yaxis: 'y2' }
+               { x: {{ g1_x|tojson if g1_x else [] }} || [], y: {{ g1_y2|tojson if g1_y2 else [] }} || [], type: 'scatter', mode: 'lines+markers', name: 'Custo', line: { color: '#10b981', width: 1.5 }, yaxis: 'y2' }
             ], { 
                 ...layoutBase, 
                 xaxis: { type: 'category', showgrid: false, tickfont: { color: '#cbd5e1', size: 11 } },
@@ -232,14 +315,13 @@
         } catch(e) { console.error(e); }
 
         try { Plotly.newPlot('plot2', [{ x: {{ g3_labels|tojson if g3_labels else [] }} || [], y: {{ g3_valores|tojson if g3_valores else [] }} || [], type: 'bar', marker: { color: '#f59e0b', width: 0.3 } }], layoutBase, configOculta); } catch(e){}
-        try { Plotly.newPlot('plot3', [{ x: {{ g2_valores|tojson if g2_valores else [] }} || [], y: {{ g2_labels|tojson if g2_labels else [] }} || [], type: 'bar', orientation: 'h', marker: { color: '#10b981', width: 0.4 } }], { ...layoutBase, margin: { t: 15, b: 30, l: 90, r: 15 } }, configOculta); } catch(e){}
         try { Plotly.newPlot('plot4', [{ x: {{ g5_labels|tojson if g5_labels else [] }} || [], y: {{ g5_valores|tojson if g5_valores else [] }} || [], type: 'bar', marker: { color: '#6366f1', width: 0.3 } }], layoutBase, configOculta); } catch(e){}
 
         {% else %}
         
         try { Plotly.newPlot('m_plot1', [{ x: {{ g1_y|tojson if g1_y else [] }} || [], y: {{ g1_x|tojson if g1_x else [] }} || [], type: 'bar', orientation: 'h', marker: { color: '#ef4444', width: 0.4 } }], { ...layoutBase, margin: { t: 15, b: 30, l: 90, r: 15 } }, configOculta); } catch(e){}
-        try { Plotly.newPlot('m_plot2', [{ x: {{ g2_labels|tojson if g2_labels else [] }} || [], y: {{ g2_valores|tojson if g2_valores else [] }} || [], type: 'bar', marker: { color: '#8b5cf6', width: 0.35 } }], { ...layoutBase, xaxis: { showgrid: false, type: 'category' } }, configOculta); } catch(e){}
-        try { Plotly.newPlot('m_plot5', [{ x: {{ g5_x|tojson if g5_x else [] }} || [], y: {{ g5_y|tojson if g5_y else [] }} || [], type: 'scatter', mode: 'lines+markers', line: { color: '#3b82f6', width: 1.5 } }], { ...layoutBase, xaxis: { type: 'category', showgrid: false } }, configOculta); } catch(e){}
+
+        try { Plotly.newPlot('m_plot5', [{ x: {{ g5_x|tojson if g5_x else [] }} || [], y: {{ g5_y|tojson if g5_y else [] }} || [], type: 'scatter', mode: 'lines+markers', line: { color: '#3b82f6', width: 1.5 } }], { ...layoutBase, autosize:true, xaxis: { type: 'category', showgrid: false } }, configOculta); } catch(e){}
 
         try {
             Plotly.newPlot('m_plot3', [{
@@ -248,8 +330,11 @@
             }], { ...layoutBase, xaxis: { showgrid: false }, yaxis: { showgrid: false, rangemode: 'tozero' } }, configOculta);
         } catch(e) { console.error(e); }
         {% endif %}
+        
+
     </script>
 
 
 </body>
 </html>
+
