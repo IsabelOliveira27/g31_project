@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title> MB & FIC - Users</title>
+    <title> MB & FIC - Utilizadores</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/users.css') }}?v={{ range(1, 9999) | random }}">
 </head>
 <body>
@@ -25,20 +25,20 @@
                             <th>Utilizadores Registados</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for pessoa in pessoas %}
-                        <tr onclick="window.location.href = '/Userlogin?select_id={{ pessoa.id }}'" style="cursor: pointer;">
-                            <td>{{ pessoa.user }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                        <tbody>
+                            {% for pessoa in pessoas %}
+                            <tr class="grupo-{{ pessoa.usergroup }}" onclick="window.location.href = '/Userlogin?select_id={{ pessoa.id }}'" style="cursor: pointer;">
+                                <td>{{ pessoa.user }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
                 </table>
             </div>
         </aside>
 
         <main class="coluna-formulario">
             <div class="formulario-card">
-                <h1 style="text-align: center;">Utilizadores</h1>
+                <h1 style="text-align: center;">Gerir Utilizadores</h1>
                 <br>
                 
                 <div class="botoes-acoes">
@@ -49,10 +49,8 @@
                     {% endif %}
                     <button id="save" type="submit" form="form" {{butedit}} class="button1">Save</button>
                     <button id="cancel" type="button" {{butedit}} onclick="window.location.href = '/Userlogin?option=cancel'" class="button1">Cancel</button>
-                    <button id="exit" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=exit'" class="button1">Exit</button>
                 </div>
-                
-                <br>
+                <p style="color: red; text-align: center; margin: 0;">{{msg}}</p>
 
                 <form id="form" action="/Userlogin?option=save" method="post" class="form-dados">
                     {% if group == "chefe" or group == "administrador_pessoal"  %} 
@@ -61,11 +59,11 @@
                             <input type="text" disabled id="id" name="id" value="{{id}}"/>
                         </div>
                         <div class="form-group">
-                            <label for="user">User:</label>
+                            <label for="user">Utilizador:</label>
                             <input type="text" {{butedit}} id="user" name="user" value="{{user}}"/>
                         </div>
                         <div class="form-group">
-                            <label for="usergroup">Group:</label>
+                            <label for="usergroup">Grupo:</label>
                             <input type="text" {{butedit}} id="usergroup" name="usergroup" value="{{usergroup}}"/>
                         </div>
                     {% else %}
@@ -93,18 +91,19 @@
                 
                 {% if group == "chefe" or group == "administrador_pessoal"  %} 
                     <div class="botoes-navegacao">
-                        <button id="first" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=first'" class="button1">First</button>
-                        <button id="previous" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=previous'" class="button1">Previous</button>
-                        <button id="next" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=next'" class="button1">Next</button>
-                        <button id="last" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=last'" class="button1">Last</button>
+                        <button id="first" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=first'" class="button1">|<</button>
+                        <button id="previous" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=previous'" class="button1"><</button>
+                        <button id="next" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=next'" class="button1">></button>
+                        <button id="last" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=last'" class="button1">>|</button>
                     </div>
                 {% endif %}
                 
-                <p style="color: red; text-align: center; margin-top: 15px;">{{msg}}</p>
+                
             </div>
         </main>
-
+        
     </div>
+
 {% endblock %}
 
 </body>
