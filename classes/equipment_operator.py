@@ -27,7 +27,7 @@ class Equipment_operator(Gclass):
             self._utilization_date = utilization_date
         else:
             try:
-                self._utilization_date = datetime.datetime.strptime(str(utilization_date).strip(), "%Y-%m-%d").date()
+                self._utilization_date = datetime.datetime.strptime(str(utilization_date).strip(), "%d/%m/%Y").date()
             except ValueError:
                 self._utilization_date = datetime.datetime.strptime(str(utilization_date).strip(), "%d/%m/%Y").date()
 
@@ -35,30 +35,41 @@ class Equipment_operator(Gclass):
         if novo_id not in Equipment_operator.lst: Equipment_operator.lst.append(novo_id)
 
     @property
-    def id(self): return self._id
+    def id(self): 
+        return self._id
+    
     @id.setter
-    def id(self, value): self._id = value
+    def id(self, value): 
+        self._id = value
         
     @property
-    def operator_id(self): return self._operator_id
+    def operator_id(self): 
+        return self._operator_id
+    
+    
     @operator_id.setter
-    def operator_id(self, operator_id): self._operator_id = int(operator_id)
+    def operator_id(self, operator_id): 
+        self._operator_id = int(operator_id)
         
     @property    
-    def equipment_id(self): return self._equipment_id
+    def equipment_id(self): 
+        return self._equipment_id
+    
     @equipment_id.setter
-    def equipment_id(self, equipment_id): self._equipment_id = int(equipment_id)
+    def equipment_id(self, equipment_id): 
+        self._equipment_id = int(equipment_id)
 
     @property
     def utilization_date(self):
-        return self._utilization_date
+        return self._utilization_date.strftime('%d/%m/%Y')
+    
     @utilization_date.setter
     def utilization_date(self, value):
         if isinstance(value, (datetime.date, datetime.datetime)):
             self._utilization_date = value
         else:
             try:
-                self._utilization_date = datetime.datetime.strptime(str(value).strip(), "%Y-%m-%d").date()
+                self._utilization_date = datetime.datetime.strptime(str(value).strip(), "%d/%m/%Y").date()
             except ValueError:
                 self._utilization_date = datetime.datetime.strptime(str(value).strip(), "%d/%m/%Y").date()
 
