@@ -70,7 +70,7 @@ function initAutocomplete(inputId, boxId, selectId, apiUrl) {
             if (attribute === 'id' || attribute.endsWith('_id')) {
                 if (text.length > 0 && validSuggestions.length > 0 && !validSuggestions.includes(text.toLowerCase())) {
                     e.preventDefault();
-                    alert("O " + labelText + " '" + text + "' n√£o existe no sistema!");
+                    alert("O " + labelText + " '" + text + "' não existe no sistema!");
                 }
             }
         });
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const stringId = parseInt(parts[0], 10);
                 if (!isNaN(stringId) && stringId < 0) {
                     e.preventDefault();
-                    alert("O ID '" + parts[0] + "' n√£o √© v√°lido ou n√£o pertence a um grupo existente!");
+                    alert("O ID '" + parts[0] + "' não é válido ou não pertence a um grupo existente!");
                     return;
                 }
             }
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     
                     e.preventDefault();
-                    alert("O " + labelText + " '" + input.value + "' n√£o pertence a um grupo existente!");
+                    alert("O " + labelText + " '" + input.value + "' não pertence a um grupo existente!");
                     return;
                 }
             }
@@ -160,4 +160,5 @@ document.addEventListener("DOMContentLoaded", function () {
         initAutocomplete("mtypes_search_val", "mtypes_autocomplete_box", "mtypes_search_att", "/api/suggest_mtypes");
     }
 });
+
 
