@@ -37,7 +37,7 @@ function initAutocomplete(inputId, boxId, selectId, apiUrl) {
                             div.style.display = 'flex';
                             div.style.justifyContent = 'space-between';
                             
-                            div.innerHTML = '<span>üîç ' + item.texto + '</span><small style="color:#94a3b8">' + item.qtd + ' registo(s)</small>';
+                            div.innerHTML = item.texto + " - " + item.qtd + ' registo(s)</small>';
                             
                             div.addEventListener('click', function() {
                                 searchInput.value = item.texto;
@@ -160,3 +160,4 @@ document.addEventListener("DOMContentLoaded", function () {
         initAutocomplete("mtypes_search_val", "mtypes_autocomplete_box", "mtypes_search_att", "/api/suggest_mtypes");
     }
 });
+
