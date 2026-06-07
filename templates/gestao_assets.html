@@ -2,11 +2,11 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>MB & FIC - Dashboard</title>
+    <title>MB & FIC - Gestão de Assets </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
 
     <style>
-    /* Remove margens padrão do navegador */
+
     body {
         margin: 0;
         padding: 0;
@@ -16,7 +16,7 @@
     .dash-container { 
         display: flex; 
         gap: 0;
-        height: calc(100vh - 60px); /* Ajusta para a altura do teu menu topo */
+        height: calc(100vh - 60px); 
         width: 100%;
         box-sizing: border-box;
     }
@@ -40,7 +40,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 90%; /* Garante preenchimento da largura da sidebar */
+        width: 90%;
         height: 18%; 
         border-radius: 8px;
         transition: 0.3s;
@@ -82,14 +82,34 @@
 
     <div class="dash-container">
         <nav class="sidebar">
-            {% if session.get("group") in ["chefe", "administrador_equipmento", "administrador_pessoal"] %}
+            {% set grupo = session.get("group", "").strip().lower() %}
+            
+            {% if grupo == "chefe" %}
                 <a href="/operators" class="card-dash">Operadores</a>
                 <a href="/equipments" class="card-dash">Equipamentos</a>
                 <a href="/utilization" class="card-dash">Utilizações</a>
                 <a href="/maintenance" class="card-dash">Manutenções</a>
                 <a href="/maintenance_types" class="card-dash">Tipos</a>
+            
+            {% elif grupo == "administrador_equipamento" %}
+                <a href="/equipments" class="card-dash">Equipamentos</a>
+                <a href="/utilization" class="card-dash">Utilizações</a>
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                <a href="/maintenance_types" class="card-dash">Tipos</a>
+                
+            {% elif grupo == "administrador_pessoal" %}
+                <a href="/operators" class="card-dash">Operadores</a>
+                <a href="/utilization" class="card-dash">Utilizações</a>
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                
+            {% elif grupo == "operador_manutencao" %}
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                
+            {% elif grupo == "operador_equipamento" %}
+                <a href="/utilization" class="card-dash">Utilizações</a>
             {% endif %}
         </nav>
+            
 
         <main class="content-area">
             <h2 style="color: #100F3D; margin-top: 0;">DASHBOARD DE ATIVIDADE</h2>
