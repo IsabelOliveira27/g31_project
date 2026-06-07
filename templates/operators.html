@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>MB & FIC - Operadores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
+    
+    <style>
+        /* 1. Sidebar fixa que começa abaixo do menu de topo */
+        .sidebar {
+            position: fixed; 
+            top: 60px; /* Ajuste este valor se o seu menu de topo tiver uma altura diferente */
+            left: 0;
+            height: calc(100vh - 60px); /* Ocupa o resto da altura disponível */
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            box-sizing: border-box;
+            background: transparent !important;
+            z-index: 1000;
+        }
+    
+
+        .card {
+            background: #100F3D !important;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            height: 18%; 
+            margin-bottom: 2%;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+    
+        /* 3. Ajuste do conteúdo principal para não ficar por baixo da sidebar */
+        .main-content {
+            margin-left: 230px; 
+            margin-top: 0px;   
+            padding: 20px;
+        }
+        
+        .card:hover {
+            background: rgba(24, 75, 219, 0.6) !important; 
+            border-radius: 8px;
+        }
+
+    </style>
+
+        
+</head>
+<body>
+    {% include 'menu.html' %}
+
+    <div class="page-container">
+        <nav class="sidebar">
+            <a href="/operators" class="card">Operadores</a>
+            <a href="/equipments" class="card">Equipamentos</a>
+            <a href="/utilization" class="card">Utilizações</a>
+            <a href="/maintenance" class="card">Manutenções</a>
+            <a href="/maintenance_types" class="card">Tipos</a>
+        </nav>
+
+        <main class="main-content">
+            <div class="box">
+                <h2>Ficha de Operadores</h2>
+
+                {% if butshow != "disabled" %}
+                <div style="background: rgba(248, 250, 252, 0.8); padding: 14px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 25px;">
+                    <form method="get" action="/operators" style="display: flex; gap: 10px; align-items: center;">
+                        <input type="hidden" name="option" value="search">
+                        <select name="search_att" id="operator_search_att" style="width: 20%;">
+                            <option value="title">Nome/Título</option>
+                            <option value="id">ID</option>
+                            <option value="category">Categoria</option>
+                        </select>
+                        <div class="autocomplete-container" style="flex: 1;">
+                            <input type="text" id="operator_search_val" name="search_val" placeholder="Escreva o termo para filtrar..." autocomplete="off" required>
+                            <div id="operator_autocomplete_box" class="search-suggestions-box"></div>
+                        </div>
+                        <button type="submit" class="blue">Filtrar</button>
+                        <a href="/operators?option=clear_search"><button type="button">Mostrar Todos</button></a>
+                    </form>
+                </div>
+                {% endif %}
+
+                <form method="post" action="/operators?option=save">
+                    <div class="form-row">
+                        <div class="form-group" style="max-width: 120px;">
+                            <label>ID Registo:</label>
+                            <input type="text" value="{{id}}" disabled style="font-family: monospace; font-weight: bold; text-align: center; background: #f1f5f9;">
+                        </div>
+                        {% if butshow == "disabled" and opt_state == "insert" %}
+                        <div class="form-group">
+                            <label style="color: #3b82f6;">Inserção por String (Opcional):</label>
+                            <input type="text" name="gclass_string" placeholder="Ex: 0;Nome;Categoria">
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Nome do Operador:</label>
+                            <input type="text" name="title" value="{{title}}" {{butedit}} placeholder="Insira o nome">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Categoria:</label>
+                            <input type="text" name="category" value="{{category}}" {{butedit}} placeholder="Insira a categoria">
+                        </div>
+                    </div>
+
+                    <div class="action-zone">
+                        {% if butshow == "disabled" %}
+                            <div style="display: flex; justify-content: center; gap: 15px;">
+                                <button type="submit" class="green" style="padding: 12px 45px;">✔ Gravar Dados</button>
+                                <a href="/operators?option=cancel"><button type="button" class="gray" style="padding: 12px 45px;">Cancelar</button></a>
+                            </div>
+                        {% else %}
+                            <div style="display: flex; justify-content: space-between; gap: 15px;">
+                                <div style="display: flex; gap: 6px;">
+                                    <a href="/operators?option=first"><button type="button">|&lt;</button></a>
+                                    <a href="/operators?option=previous"><button type="button">&lt;</button></a>
+                                    <a href="/operators?option=next"><button type="button">&gt;</button></a>
+                                    <a href="/operators?option=last"><button type="button">&gt;|</button></a>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <a href="/operators?option=insert"><button type="button" class="green">+ Inserir</button></a>
+                                    <a href="/operators?option=edit"><button type="button" class="blue">Alterar</button></a>
+                                    <a href="/operators?option=delete"><button type="button" class="red">Eliminar</button></a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </form>
+
+                <div class="results-section" style="margin-top: 30px;">
+                    <h3>Visualização Global dos Operadores ({{ todos_registos|length }} registos)</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><a href="/operators?option=sort_id">ID ↕</a></th>
+                                    <th><a href="/operators?option=sort_title">Nome ↕</a></th>
+                                    <th><a href="/operators?option=sort_category">Categoria ↕</a></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in todos_registos %}
+                                <tr class="clickable-row" onclick="window.location.href='/operators?option=current&id={{ item.id }}'"
+                                    style="{% if item.id|string == id|string %}background-color: #f1f5f9; font-weight: bold;{% endif %}">
+                                    <td>#{{ item.id }}</td>
+                                    <td>{{ item.title }}</td>
+                                    <td>{{ item.category }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initAutocomplete('operator_search_val', 'operator_autocomplete_box', 'operator_search_att', '/api/suggest_operators');
+        });
+    </script>
+</body>
+</html>
