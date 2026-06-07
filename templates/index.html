@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MB & FIC - Início</title>
+    
+    {% block styles %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    {% endblock %}
+</head>
+<body>
+
+    {% include 'menu.html' %}
+
+    <main class="conteudo-principal">
+        {% block content %}
+            <div class="boas-vindas">
+                <h2>MB & FIC</h2>
+                <p>A empresa de topo no mercado</p>
+            </div>
+        {% endblock %}
+    </main>
+
+</body>
+</html>
+    </main>
+
+</body>
+</html>

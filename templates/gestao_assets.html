@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>MB & FIC - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
+
+    <style>
+    /* Remove margens padrão do navegador */
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    .dash-container { 
+        display: flex; 
+        gap: 0;
+        height: calc(100vh - 60px); /* Ajusta para a altura do teu menu topo */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sidebar {
+        width: 220px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background: transparent;
+        height: 100%;
+        padding: 10px; /* Espaçamento interno da sidebar */
+        box-sizing: border-box;
+    }
+
+    .card-dash {
+        background: #100F3D !important;
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 90%; /* Garante preenchimento da largura da sidebar */
+        height: 18%; 
+        border-radius: 8px;
+        transition: 0.3s;
+        margin-bottom: 10px;
+    }
+
+    .card-dash:hover { background: #1e293b !important; }
+
+    .content-area {
+        flex-grow: 1;
+        padding: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+
+        .dash-grid { 
+            display: flex; 
+            gap: 20px; 
+            flex-grow: 1; 
+            overflow: hidden;
+        }
+
+        .data-box {
+            flex: 1; 
+            background: #ffffff; 
+            padding: 20px; 
+            border-radius: 12px; 
+            overflow-y: auto;
+        }
+
+        .data-item { padding: 15px; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    {% include 'menu.html' %}
+
+    <div class="dash-container">
+        <nav class="sidebar">
+            {% set grupo = session.get("group", "").strip().lower() %}
+            
+            {% if grupo == "chefe" %}
+                <a href="/operators" class="card-dash">Operadores</a>
+                <a href="/equipments" class="card-dash">Equipamentos</a>
+                <a href="/utilization" class="card-dash">Utilizações</a>
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                <a href="/maintenance_types" class="card-dash">Tipos</a>
+            
+            {% elif grupo == "administrador_equipamento" %}
+                <a href="/equipments" class="card-dash">Equipamentos</a>
+                <a href="/utilization" class="card-dash">Utilizações</a>
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                <a href="/maintenance_types" class="card-dash">Tipos</a>
+                
+            {% elif grupo == "administrador_pessoal" %}
+                <a href="/operators" class="card-dash">Operadores</a>
+                <a href="/utilization" class="card-dash">Utilizações</a>
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                
+            {% elif grupo == "operador_manutencao" %}
+                <a href="/maintenance" class="card-dash">Manutenções</a>
+                
+            {% elif grupo == "operador_equipamento" %}
+                <a href="/utilization" class="card-dash">Utilizações</a>
+            {% endif %}
+        </nav>
+            
+
+        <main class="content-area">
+            <h2 style="color: #100F3D; margin-top: 0;">DASHBOARD DE ATIVIDADE</h2>
+            
+            <div class="dash-grid">
+                <div class="data-box">
+                    <h3 style="margin-top: 0;">Últimas 5 Manutenções</h3>
+                    {% for m in ultimas_manutencoes %}
+                    <div class="data-item">
+                        <strong>Data:</strong> {{ m.maintenance_date_final.strftime('%d/%m/%Y') }}<br>
+                        <strong>Equipamento ID:</strong> {{ m.equipment_id }}<br>
+                        <strong>Categoria:</strong> {{ m.category }}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="data-box">
+                    <h3 style="margin-top: 0;">Últimas 5 Utilizações</h3>
+                    {% for u in ultimas_utilizacoes %}
+                    <div class="data-item">
+                        <strong>Data:</strong> {{ u.utilization_date.strftime('%d/%m/%Y') }}<br>
+                        <strong>Operador ID:</strong> {{ u.operator_id }}<br>
+                        <strong>Custo:</strong> {{ u.cost }} €
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

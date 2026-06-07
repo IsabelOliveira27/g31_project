@@ -1,0 +1,26 @@
+grupo: chefe
+Francesca Charlton FIC1234
+Mathew Brown MB1234
+
+grupo: administrador_equipamento
+Ana Costa AC1234
+Carlos Gouveia CG1234
+Pedro Costa PC1234
+
+grupo: administrador_pessoal
+Philip Rogers PR1234
+
+grupo: operador_manutencao
+Carlota Rodrigues CR1234
+Francisco Queirós FQ1234
+Miguel São Bento MSB1234 
+Tiago Couto TC1234
+Sofia dos Santos SS1234
+
+grupo: operador_equipamento
+Isabel Sorana IS1234
+Bernardete da Silva BS1234 
+Mateus Freitas MF1234
+Carminho Andrade CA1234
+Maria João Lemos JL1234
+

@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+    {% block styles %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    {% endblock %}
+</head>
+<body>
+
+{% block content %}
+    <div class="dados">
+        <h1>Login</h1>
+        
+        <form id="form" action="/chklogin" method="post">
+            <input type="text" id="user" name="user" value="{{user}}" placeholder="Nome de utilizador"/>
+            <input type="password" id="password" name="password" value="{{password}}" placeholder="Password"/>
+            <button type="submit" class="button1">Login</button>
+        </form>
+        
+        <h3 style="color: red;">{{resul}}</h3>
+    </div>
+{% endblock %}
+
+</body>
+</html>
