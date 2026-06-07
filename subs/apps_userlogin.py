@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, session
-from classes.userlogin import Userlogin
-from app import db_path2 
+from classes.userlogin import Userlogin 
 
-def apps_userlogin():
+def apps_userlogin(db_path2):
     ulogin = session.get("user")
     user_id = Userlogin.get_user_id(ulogin)
     
