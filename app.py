@@ -180,6 +180,7 @@ def dashboard():
     if vista == "utilizacao":
         custo_total = 0.0
         maior_custo = 0.0
+        custo2=100000
         cronograma = {}
         cronograma_horas = {}
         operador_custos = {}
@@ -199,7 +200,11 @@ def dashboard():
                 custo_total += custo
                 if custo > maior_custo:
                     maior_custo = custo
-
+                
+                custo = float(uo.cost) if getattr(uo, 'cost', None) else 10000000.0
+                if custo < custo2:
+                    custo2 = custo
+                
                 chave_tempo = f"{ano}-{mes}" if filtro_ano == "Todos" else f"Dia {dia}"
                 cronograma[chave_tempo] = cronograma.get(chave_tempo, 0.0) + custo
                 cronograma_horas[chave_tempo] = cronograma_horas.get(chave_tempo, 0.0) + horas
@@ -242,10 +247,10 @@ def dashboard():
         g1_y = [cronograma[k] for k in g1_x]
         g1_y2 = [cronograma_horas[k] for k in g1_x]
 
-        ops_m = sorted(operador_custos.items(), key=lambda x: x[1], reverse=True)[:5]
-        ops_m = list(reversed(ops_m))
-        g2_labels = [x[0] for x in ops_m]
-        g2_valores = [x[1] for x in ops_m]
+        ops_m_sorted = sorted(operador_custos.items(), key=lambda x: x[1], reverse=True)[:5]
+        ops_m_reversed = list(reversed(ops_m_sorted)) 
+        g2_labels = [x[0] for x in ops_m_reversed]
+        g2_valores = [x[1] for x in ops_m_reversed]
 
         tipos_m = sorted(equip_type_custos.items(), key=lambda x: x[1], reverse=True)
         g3_labels = [x[0] for x in tipos_m]
@@ -256,6 +261,22 @@ def dashboard():
         g5_valores = [x[1] for x in cats_m]
 
         media_custo = (custo_total / len(tabela_registos)) if tabela_registos else 0.0
+        
+        equip_custos = {}
+        for c in getattr(Equipment_operator, 'lst', []):
+            if c in getattr(Equipment_operator, 'obj', {}):
+                uo = Equipment_operator.obj[c]
+                eq_id = str(uo.equipment_id).strip()
+                custo = float(uo.cost) if getattr(uo, 'cost', None) else 0.0
+                
+                # Obter nome do equipamento
+                eq_name = f"Equip. #{eq_id}"
+                if int(eq_id) in Equipment.obj:
+                    eq_obj = Equipment.obj[int(eq_id)]
+                    eq_name = getattr(eq_obj, 'name', getattr(eq_obj, '_name', eq_name))
+                    
+                equip_custos[eq_name] = equip_custos.get(eq_name, 0.0) + custo
+    
 
         return render_template(
             "dashboard.html", ulogin=session.get("user"),
@@ -264,9 +285,10 @@ def dashboard():
             kpi1=f"{custo_total:.2f} €", title1="Custo Total Operacional",
             kpi2=f"{media_custo:.2f} €", title2="Custo Médio por Turno",
             kpi3=f"{maior_custo:.2f} €", title3="Maior Custo Registado",
+            kpi4=f"{custo2:.2f} €", title4="Menor Custo Registado",
             g1_x=g1_x, g1_y=g1_y, g1_y2=g1_y2, g2_labels=g2_labels, g2_valores=g2_valores,
             g3_labels=g3_labels, g3_valores=g3_valores, g5_labels=g5_labels, g5_valores=g5_valores,
-            tabela_registos=tabela_registos,
+            tabela_registos=tabela_registos, 
             h1="Data", h2="Equipamento", h3="Operador", h4="Custo", h5="Categoria"
         )
 
