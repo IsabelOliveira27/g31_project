@@ -418,11 +418,24 @@ def dashboard():
     
     
     
+import pandas as pd
+
 @app.route('/gestao-assets')
 def gestao_assets():
-    return render_template('gestao_assets.html',ulogin=session.get("user"))
+    df = pd.read_csv('data/g31_Equipment_Operators_Final_2.csv')
     
-
+    # Converter datas garantindo dayfirst=True
+    df['maintenance_date_final'] = pd.to_datetime(df['maintenance_date_final'], dayfirst=True, errors='coerce')
+    df['utilization_date'] = pd.to_datetime(df['utilization_date'], dayfirst=True, errors='coerce')
+    
+    # Ordenar pelos últimos 5
+    maint = df.dropna(subset=['maintenance_date_final']).sort_values(by='maintenance_date_final', ascending=False).head(5)
+    util = df.dropna(subset=['utilization_date']).sort_values(by='utilization_date', ascending=False).head(5)
+    
+    return render_template('gestao_assets.html', ulogin=session.get("user"),
+                           ultimas_manutencoes=maint.to_dict(orient='records'),
+                           ultimas_utilizacoes=util.to_dict(orient='records'))
+    
 
 @app.route("/operators", methods=["POST", "GET"])
 def operators():
