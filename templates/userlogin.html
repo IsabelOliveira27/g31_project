@@ -38,12 +38,12 @@
 
         <main class="coluna-formulario">
             <div class="formulario-card">
-                <h1 style="text-align: center;">Userlogin</h1>
+                <h1 style="text-align: center;">Utilizadores</h1>
                 <br>
                 
                 <div class="botoes-acoes">
                     <button id="edit" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=edit'" class="button1">Edit</button>
-                    {% if group == "chefe" %} 
+                    {% if group == "chefe"or group == "administrador_pessoal" %} 
                         <button id="delete" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=delete'" class="button1">Delete</button>
                         <button id="insert" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=insert'" class="button1">Insert</button>
                     {% endif %}
@@ -55,7 +55,7 @@
                 <br>
 
                 <form id="form" action="/Userlogin?option=save" method="post" class="form-dados">
-                    {% if group == "chefe" %} 
+                    {% if group == "chefe" or group == "administrador_pessoal"  %} 
                         <div class="form-group">
                             <label for="id">Id:</label>
                             <input type="text" disabled id="id" name="id" value="{{id}}"/>
@@ -91,7 +91,7 @@
                 
                 <br>
                 
-                {% if group == "chefe" %} 
+                {% if group == "chefe" or group == "administrador_pessoal"  %} 
                     <div class="botoes-navegacao">
                         <button id="first" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=first'" class="button1">First</button>
                         <button id="previous" type="button" {{butshow}} onclick="window.location.href = '/Userlogin?option=previous'" class="button1">Previous</button>
