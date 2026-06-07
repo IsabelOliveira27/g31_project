@@ -44,10 +44,10 @@ def apps_userlogin(db_path2):
     if group not in ["chefe", "administrador_pessoal"]:
         try:
             if id_atual_na_tela and int(id_atual_na_tela) != int(user_id):
-                butshow = "disabled"   # Tranca o botão Editar no HTML
+                butshow = "disabled"   
                 
                 if option == "edit":
-                    option = ""        # Limpa a ação
+                    option = ""       
                     msg = "Erro: Não tem permissão para editar este utilizador!"
         except (ValueError, TypeError):
             butshow = "disabled"
@@ -139,7 +139,7 @@ def apps_userlogin(db_path2):
                     id_para_atualizar = int(obj.id)
                     permissao_para_gravar = False
 
-                    # CASO 1: Chefes / Administradores
+
                     if group in ["chefe", "administrador_pessoal"]:
                         permissao_para_gravar = True
                         if user_input: 
@@ -149,7 +149,7 @@ def apps_userlogin(db_path2):
                         if password_input != "": 
                             obj._password = Userlogin.set_password(password_input)
                     
-                    # CASO 2: Operadores (Faltava este bloco no teu!)
+
                     else:
                         if id_para_atualizar == int(user_id):
                             if password_input != "": 
