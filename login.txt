@@ -19,8 +19,7 @@ Sofia dos Santos SS1234
 
 grupo: operador_equipamento
 Isabel Sorana IS1234
-Bernardete da Silva BS1234 
 Mateus Freitas MF1234
 Carminho Andrade CA1234
-Maria João Lemos JL1234
+Maria João Lemos ML1234
 
