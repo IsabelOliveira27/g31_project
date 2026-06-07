@@ -1,7 +1,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #c7d1e2;
+    background-color: rgba(255, 255, 255, 0.93);
     background-size: cover;
     color: lightblue;
     margin: 0;
@@ -34,6 +34,7 @@ nav a:hover, nav a.active {
     background-color: #1e293b;
 }
 
+
 .admin-dashboard-layout {
     display: flex;
     gap: 30px;
@@ -54,7 +55,6 @@ nav a:hover, nav a.active {
     flex: 5;
 }
 
-#tabela esquerda
 .tabela-container {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(226, 232, 240, 0.8);
@@ -70,14 +70,15 @@ nav a:hover, nav a.active {
 }
 
 .tabela-unica-coluna th {
-    background-color: #f8fafc;
-    color: #475569;
+    background-color: black;
+    color: white;
     padding: 16px 20px;
     font-size: 0.9rem;
     font-weight: 600;
     border-bottom: 2px solid #e2e8f0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-align: center;
 }
 
 .tabela-unica-coluna td {
@@ -92,15 +93,53 @@ nav a:hover, nav a.active {
     border-bottom: none;
 }
 
-.tabela-unica-coluna tbody tr:hover td {
-    background-color: #f8fafc;
-    color: #6366f1; 
-    padding-left: 25px; 
+
+tr.grupo-chefe td {
+    background-color: #579ad4 ;
+    color: #ffffff ;
+    font-weight: bold;
 }
+
+
+tr.grupo-administrador_equipamento td {
+    background-color: #58ab3a;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+
+tr.grupo-administrador_pessoal td {
+    background-color: #f0d122;
+    color: #ffffff ; 
+    font-weight: bold;
+}
+
+
+tr.grupo-operador_equipamento td {
+    background-color: #9e295a ;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+
+tr.grupo-operador_manutencao td {
+    background-color: #c71414;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+
+.tabela-unica-coluna tbody tr:hover td {
+    background-color: #9ba9ac;
+    color: #ffffff;            
+    padding-left: 25px;    
+    font-weight: bold;     
+}
+
 
 #container direito
 .formulario-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: #fff308;
     border: 1px solid rgba(226, 232, 240, 0.8);
     padding: 40px;
     border-radius: 14px;
