@@ -115,7 +115,7 @@
                         
                         <div class="form-group" style="flex: 1;">
                             <label>Data de Nascimento:</label>
-                            <input type="text" name="birth_date" value="{{birth_date}}" {{butedit}} placeholder="Ex: 19/03/2006"required>
+                            <input type="text" name="birth_date" value="{{birth_date}}" {{butedit}} placeholder="Ex: 19/03/2006" pattern="\d{2}/\d{2}/\d{4}" title="A data deve estar no formato dd/mm/yyyy"required>
                         </div>   
                     </div>
 
