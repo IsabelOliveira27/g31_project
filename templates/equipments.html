@@ -112,7 +112,7 @@
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <label>Data de Registo:</label>
-                            <input type="text" name="creation_date" value="{{creation_date}}" {{butedit}} placeholder="Ex: 19/04/2025"required>
+                            <input type="text" name="creation_date" value="{{creation_date}}" {{butedit}} placeholder="Ex: 19/04/2025" pattern="\d{2}/\d{2}/\d{4}" title="A data deve estar no formato dd/mm/yyyy"required>
                         </div>
                         <div class="form-group" style="flex: 2;">
                             <label>Tipo de Equipamento:</label>
