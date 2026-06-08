@@ -5,12 +5,12 @@
     <title> MB & FIC - Tipos de Manutenção</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
     <style>
-        /* 1. Sidebar fixa que começa abaixo do menu de topo */
+
         .sidebar {
             position: fixed; 
-            top: 60px; /* Ajuste este valor se o seu menu de topo tiver uma altura diferente */
+            top: 60px; 
             left: 0;
-            height: calc(100vh - 60px); /* Ocupa o resto da altura disponível */
+            height: calc(100vh - 60px); 
             width: 220px;
             display: flex;
             flex-direction: column;
@@ -36,7 +36,6 @@
             transition: 0.3s;
         }
     
-        /* 3. Ajuste do conteúdo principal para não ficar por baixo da sidebar */
         .main-content {
             margin-left: 230px; 
             margin-top: 0px;   
