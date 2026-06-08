@@ -549,8 +549,8 @@ def utilization():
 
 @app.route("/maintenance", methods=["POST", "GET"])
 def maintenance():
-    fields = ["equipment_id", "maintenance_type_id", "maintenance_date", "extra_info"]
-    fmt = lambda next_id, f: f"{next_id};{f['equipment_id']};{f['maintenance_type_id']};{f['maintenance_date']};{f['extra_info']}"
+    fields = ["equipment_id", "maintenance_type_id", "maintenance_date", "extra_info","maintenance_date_final"]
+    fmt = lambda next_id, f: f"{next_id};{f['equipment_id']};{f['maintenance_type_id']};{f['maintenance_date']};{f['extra_info']};{f['maintenance_date_final']}"
     
     option = request.args.get("option")
     if option == "current":
@@ -573,7 +573,7 @@ def maintenance():
                            id=getattr(obj, Maintenance_event.att[0]) if obj else Maintenance_event.get_id(0), 
                            equipment_id=getattr(obj, Maintenance_event.att[1]) if obj else "", 
                            maintenance_type_id=getattr(obj, Maintenance_event.att[2]) if obj else "", 
-                           maintenance_date=obj.maintenance_date if obj else "", 
+                           maintenance_date=obj.maintenance_date if obj else "", maintenance_date_final=obj.maintenance_date_final if obj else "", 
                            extra_info=getattr(obj, Maintenance_event.att[4]) if obj else "", todos_registos=todos_registos)
 
 
@@ -726,4 +726,4 @@ def userlogin():
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
-    
+   
