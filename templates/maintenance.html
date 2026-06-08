@@ -100,11 +100,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>ID do Equipamento:</label>
-                            <input type="text" name="equipment_id" value="{{equipment_id}}" {{butedit}} required>
+                            <input type="text" name="equipment_id" value="{{equipment_id}}" {{butedit}} inputmode="numeric" pattern="[0-9]*" title="Por favor, insira apenas números" required  placeholder="Ex: 101">
                         </div>
                         <div class="form-group">
                             <label>ID do Tipo de Manutenção:</label>
-                            <input type="text" name="maintenance_type_id" value="{{maintenance_type_id}}" {{butedit}}required>
+                            <input type="text" name="maintenance_type_id" value="{{maintenance_type_id}}" {{butedit}} inputmode="numeric" pattern="[0-9]*" title="Por favor, insira apenas números" required  placeholder="Ex: 101">
                         </div>
                     </div>
         
@@ -116,11 +116,11 @@
                         
                         <div class="form-group" style="flex: 1;">
                             <label>Data de manutenção:</label>
-                            <input type="text" name="maintenance_date" value="{{maintenance_date}}" {{butedit}} placeholder="Ex: 19/03/2026" required>
+                            <input type="text" name="maintenance_date" value="{{maintenance_date}}" {{butedit}} placeholder="Ex: 19/03/2026" pattern="\d{2}/\d{2}/\d{4}" title="A data deve estar no formato dd/mm/yyyy"required>
                         </div>  
                         <div class="form-group" style="flex: 1;">
                             <label>Data de manutenção final:</label>
-                            <input type="text" name="maintenance_date_final" value="{{maintenance_date_final}}" {{butedit}} placeholder="Ex: 20/03/2026" required>
+                            <input type="text" name="maintenance_date_final" value="{{maintenance_date_final}}" {{butedit}} placeholder="Ex: 20/03/2026" pattern="\d{2}/\d{2}/\d{4}" title="A data deve estar no formato dd/mm/yyyy" required>
                         </div>                        
                          
                     </div>
