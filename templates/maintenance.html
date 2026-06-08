@@ -5,12 +5,11 @@
     <title> MB & FIC - Manutenções</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
     <style>
-        /* 1. Sidebar fixa que começa abaixo do menu de topo */
         .sidebar {
             position: fixed; 
-            top: 60px; /* Ajuste este valor se o seu menu de topo tiver uma altura diferente */
+            top: 60px; 
             left: 0;
-            height: calc(100vh - 60px); /* Ocupa o resto da altura disponível */
+            height: calc(100vh - 60px); 
             width: 220px;
             display: flex;
             flex-direction: column;
@@ -112,10 +111,22 @@
         
                     <div class="form-row">
                         <div class="form-group" style="flex: 1;">
-                            <label>Informação Extra / Notas de Intervenção:</label>
+                            <label>Informação Extra:</label>
                             <input type="text" name="extra_info" value="{{extra_info}}" {{butedit}} placeholder="Ex: Troca de óleo efetuada com sucesso">
                         </div>
+                        
+                        <div class="form-group" style="flex: 1;">
+                            <label>Data de manutenção:</label>
+                            <input type="text" name="maintenance_date" value="{{maintenance_date}}" {{butedit}} placeholder="Ex: 19/03/2026">
+                        </div>  
+                        <div class="form-group" style="flex: 1;">
+                            <label>Data de manutenção final:</label>
+                            <input type="text" name="maintenance_date_final" value="{{maintenance_date_final}}" {{butedit}} placeholder="Ex: 20/03/2026">
+                        </div>                        
+                         
                     </div>
+                    
+                    
         
                     <div class="action-zone">
                         {% if butshow == "disabled" %}
@@ -151,6 +162,8 @@
                                     <th>ID Equipamento</th>
                                     <th>ID Tipo Manutenção</th>
                                     <th>Notas/Info Extra</th>
+                                    <th>Início de Manutenção</th>
+                                    <th>Fim de Manutenção</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -161,6 +174,8 @@
                                     <td>{{ item.equipment_id }}</td>
                                     <td>{{ item.maintenance_type_id }}</td>
                                     <td>{{ item.extra_info }}</td>
+                                    <td>{{ item.maintenance_date }}</td>
+                                    <td>{{ item.maintenance_date_final }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -177,5 +192,3 @@
             initAutocomplete('maint_search_val', 'maint_autocomplete_box', 'maint_search_att', '/api/suggest_maintenance');
         });
     </script>
-</body>
-</html>
