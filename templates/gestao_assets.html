@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v={{ range(1, 9999) | random }}">
 
     <style>
-    /* Remove margens padrão do navegador */
+    
     body {
         margin: 0;
         padding: 0;
@@ -16,7 +16,7 @@
     .dash-container { 
         display: flex; 
         gap: 0;
-        height: calc(100vh - 60px); /* Ajusta para a altura do teu menu topo */
+        height: calc(100vh - 60px); 
         width: 100%;
         box-sizing: border-box;
     }
@@ -28,7 +28,7 @@
         flex-direction: column;
         background: transparent;
         height: 100%;
-        padding: 10px; /* Espaçamento interno da sidebar */
+        padding: 10px; 
         box-sizing: border-box;
     }
 
@@ -40,7 +40,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 90%; /* Garante preenchimento da largura da sidebar */
+        width: 90%; 
         height: 18%; 
         border-radius: 8px;
         transition: 0.3s;
